@@ -80,4 +80,17 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>QT5_HEADERS_LOC</name>
+			<type>2</type>
+			<locationURI>QT5_HEADERS_LOC</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>QT5_HEADERS_LOC</name>
+			<value>file:/home/kopasiak/Qt/5.1.0/gcc_64/include</value>
+		</variable>
+	</variableList>
 </projectDescription>
