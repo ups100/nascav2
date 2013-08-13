@@ -8,4 +8,4 @@ then
 fi
 
 cd build
-cmake ../code
+cmake -DQt5Core_DIR=/home/kopasiak/Qt/5.1.0/gcc_64/lib/cmake/Qt5Core/ ../code
