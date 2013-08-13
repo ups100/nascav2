@@ -1,41 +1,38 @@
 /**
-* @file  DataProviderFactory.h
-* @brief  Implementation of the Class DataProviderFactory
-* @date  Created on:      13-sie-2013 17:38:11
-* @author Krysztof Opasiak <ups100@tlen.pl>
-*/
+ * @file  DataProviderFactory.h
+ * @brief  Implementation of the Class DataProviderFactory
+ * @date  Created on:      13-sie-2013 17:38:11
+ * @author Krysztof Opasiak <ups100@tlen.pl>
+ */
 
 #include "DataProviderFactory.h"
 
 using INZ_project::Base::DataProviderFactory;
 
-
-DataProviderFactory::DataProviderFactory(){
-
-}
-
-
-
-DataProviderFactory::~DataProviderFactory(){
+DataProviderFactory::DataProviderFactory()
+{
 
 }
 
+DataProviderFactory::~DataProviderFactory()
+{
 
-
-
-
-DataProvider * DataProviderFactory::getDataProvider(const QString& id){
-
-	return  NULL;
 }
 
+DataProvider * DataProviderFactory::getDataProvider(const QString& id)
+{
 
-DataProviderFactory* DataProviderFactory::getInstance(){
-
-	return  NULL;
+    return NULL;
 }
 
+DataProviderFactory* DataProviderFactory::getInstance()
+{
 
-void DataProviderFactory::registerDataProvider(DataProvider* dataProvider, QString id){
+    return NULL;
+}
+
+void DataProviderFactory::registerDataProvider(DataProvider* dataProvider,
+        QString id)
+{
 
 }
