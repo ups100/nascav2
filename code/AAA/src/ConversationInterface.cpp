@@ -7,7 +7,8 @@
 
 #include "ConversationInterface.h"
 
-using INZ_project::AAA::ConversationInterface;
+namespace INZ_project {
+namespace AAA {
 
 ConversationInterface::ConversationInterface()
 {
@@ -18,3 +19,6 @@ ConversationInterface::~ConversationInterface()
 {
 
 }
+
+} //namespace AAA
+} //namespace INZ_project

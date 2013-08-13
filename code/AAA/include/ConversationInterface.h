@@ -10,6 +10,7 @@
 
 namespace INZ_project {
 namespace AAA {
+
 class ConversationInterface
 {
 
@@ -22,7 +23,6 @@ public:
 
 };
 
-}
-
-}
+} //namespace AAA
+} //namespace INZ_project
 #endif // !defined(EA_FF532278_8F94_479e_AC6E_C6195432C273__INCLUDED_)

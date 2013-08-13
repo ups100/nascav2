@@ -7,7 +7,8 @@
 
 #include "AAAModule.h"
 
-using INZ_project::AAA::AAAModule;
+namespace INZ_project {
+namespace AAA {
 
 AAAModule::AAAModule()
 {
@@ -23,3 +24,6 @@ void AAAModule::setConversationInterface(ConversationInterface* conv)
 {
 
 }
+
+} //namespace AAA
+} //namespace INZ_project

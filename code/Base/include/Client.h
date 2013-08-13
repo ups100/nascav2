@@ -9,23 +9,25 @@
 #define EA_D6440D50_CCA5_46f1_8A41_6416AF2C70A2__INCLUDED_
 
 #include "DataChannel.h"
+#include <QString>
 
 namespace INZ_project {
 namespace Base {
+
 class Client
 {
 
 public:
     Client();
     virtual ~Client();
-    INZ_project::Base::DataChannel *m_DataChannel;
 
     const QString& getClientId();
     const DataChannel& getDataChannel();
 
+private:
+    INZ_project::Base::DataChannel *m_DataChannel;
 };
 
-}
-
-}
+} //namespace Base
+} //namespace INZ_project
 #endif // !defined(EA_D6440D50_CCA5_46f1_8A41_6416AF2C70A2__INCLUDED_)

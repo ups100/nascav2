@@ -6,8 +6,10 @@
  */
 
 #include "AAAFactory.h"
+#include "AAAModule.h"
 
-using INZ_project::AAA::AAAFactory;
+namespace INZ_project {
+namespace AAA {
 
 AAAFactory::AAAFactory()
 {
@@ -41,3 +43,6 @@ void AAAFactory::registerAAAModule(AAAModule* module, QString id)
 {
 
 }
+
+} //namespace AAA
+} //namespace INZ_project
