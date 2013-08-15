@@ -320,7 +320,9 @@ WARN_LOGFILE           =
 INPUT                  = 	@CMAKE_SOURCE_DIR@/AAA \
 							@CMAKE_SOURCE_DIR@/Base \
 							@CMAKE_SOURCE_DIR@/Cryptographic \
+							@CMAKE_SOURCE_DIR@/FactoryRegistration \
 							@CMAKE_SOURCE_DIR@/IcingaSenderModule \
+							@CMAKE_SOURCE_DIR@/Logger \
 							@CMAKE_SOURCE_DIR@/TcpStandardModule 
 
 # If the value of the INPUT tag contains directories, you can use the 
