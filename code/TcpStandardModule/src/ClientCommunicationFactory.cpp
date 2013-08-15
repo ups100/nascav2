@@ -7,7 +7,8 @@
 
 #include "ClientCommunicationFactory.h"
 
-using INZ_project::TcpStandardModule::ClientCommunicationFactory;
+namespace INZ_project {
+namespace TcpStandardModule {
 
 ClientCommunicationFactory::ClientCommunicationFactory()
 {
@@ -35,5 +36,8 @@ ClientCommunicationFactory* ClientCommunicationFactory::getInstance()
 QList<QString> ClientCommunicationFactory::getProtocolVersions()
 {
 
-    return NULL;
+    return QList<QString>();
 }
+
+} //namespace TcpStandardModule
+} //namespace INZ_project

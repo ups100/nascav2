@@ -6,8 +6,10 @@
  */
 
 #include "Client.h"
+#include "DataChannel.h"
 
-using INZ_project::Base::Client;
+namespace INZ_project {
+namespace Base {
 
 Client::Client()
 {
@@ -22,11 +24,14 @@ Client::~Client()
 const QString& Client::getClientId()
 {
 
-    return NULL;
+    return QString();
 }
 
 const DataChannel& Client::getDataChannel()
 {
 
-    return NULL;
+    return DataChannel();
 }
+
+} //namespace Base
+} //namespace INZ_project

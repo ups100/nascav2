@@ -8,6 +8,8 @@
 #if !defined(EA_EB7D702C_2C96_4fe9_AC1C_5DC5DDE2C809__INCLUDED_)
 #define EA_EB7D702C_2C96_4fe9_AC1C_5DC5DDE2C809__INCLUDED_
 
+#include <QByteArray>
+
 namespace INZ_project {
 namespace Cryptographic {
 class AsymetricAlgorithm

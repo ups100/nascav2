@@ -26,7 +26,6 @@ public:
 
 };
 
-}
-
-}
+} //namespace Base
+} //namespace INZ_project
 #endif // !defined(EA_23160C1D_5A21_447d_841D_C07CB33C6AC4__INCLUDED_)

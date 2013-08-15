@@ -7,7 +7,8 @@
 
 #include "CryptographicFactory.h"
 
-using INZ_project::Cryptographic::CryptographicFactory;
+namespace INZ_project {
+namespace Cryptographic {
 
 CryptographicFactory::CryptographicFactory()
 {
@@ -19,7 +20,7 @@ CryptographicFactory::~CryptographicFactory()
 
 }
 
-const QList<QString>& CryptographicFactory::getASymAlgorithmList()
+const QList<QString>* CryptographicFactory::getASymAlgorithmList()
 {
 
     return NULL;
@@ -31,14 +32,17 @@ CryptographicFactory* CryptographicFactory::getInstance()
     return NULL;
 }
 
-const QList<QString>& CryptographicFactory::getSymAlgorithmList()
+const QList<QString>* CryptographicFactory::getSymAlgorithmList()
 {
 
     return NULL;
 }
 
-const QList<QString>& CryptographicFactory::getSymetricAlgorithmList()
+const QList<QString>* CryptographicFactory::getSymetricAlgorithmList()
 {
 
     return NULL;
 }
+
+} //namespace Base
+} //namespace INZ_project

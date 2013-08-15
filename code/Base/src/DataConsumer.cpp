@@ -7,7 +7,9 @@
 
 #include "DataConsumer.h"
 
-using INZ_project::Base::DataConsumer;
+namespace INZ_project {
+namespace Base {
+
 
 DataConsumer::DataConsumer()
 {
@@ -18,3 +20,6 @@ DataConsumer::~DataConsumer()
 {
 
 }
+
+} //namespace Base
+} //namespace INZ_project

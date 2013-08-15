@@ -7,7 +7,8 @@
 
 #include "ConfigurationParser.h"
 
-using INZ_project::Base::ConfigurationParser;
+namespace INZ_project {
+namespace Base {
 
 ConfigurationParser::ConfigurationParser()
 {
@@ -42,3 +43,6 @@ void ConfigurationParser::getRoutes(const QString& client,
 {
 
 }
+
+} //namespace Base
+} //namespace INZ_project

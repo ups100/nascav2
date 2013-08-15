@@ -27,7 +27,7 @@ AAAModule* AAAFactory::getAAAModule(const QString& id)
     return NULL;
 }
 
-QList<QString> AAAFactory::getAAAModulesList()
+QList<QString>* AAAFactory::getAAAModulesList()
 {
 
     return NULL;

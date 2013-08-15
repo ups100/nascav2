@@ -8,6 +8,9 @@
 #if !defined(EA_E9E17D99_BB22_452f_BD9C_2B30B7D935A1__INCLUDED_)
 #define EA_E9E17D99_BB22_452f_BD9C_2B30B7D935A1__INCLUDED_
 
+#include <QList>
+#include <QString>
+
 namespace INZ_project {
 namespace Base {
 class ConfigurationParser
@@ -24,7 +27,6 @@ public:
 
 };
 
-}
-
-}
+} //namespace Base
+} //namespace INZ_project
 #endif // !defined(EA_E9E17D99_BB22_452f_BD9C_2B30B7D935A1__INCLUDED_)

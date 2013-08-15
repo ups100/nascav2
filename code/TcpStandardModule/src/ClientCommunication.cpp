@@ -22,5 +22,5 @@ ClientCommunication::~ClientCommunication()
 ClientCommunication* ClientCommunication::clone()
 {
 
-    return NULL;
+    return 0L;
 }

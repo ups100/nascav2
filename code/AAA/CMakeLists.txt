@@ -3,6 +3,7 @@ MESSAGE( "Building AAA target." )
 #directories with headers for this target
 INCLUDE_DIRECTORIES( 				${Boost_INCLUDE_DIRS}
 						${INZ_SOURCE_DIR}/AAA/include
+						${INZ_SOURCE_DIR}/Base/include
 )
 
 #if some class inherits QObject (has Q_OBJECT macro) add it's header file here

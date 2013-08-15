@@ -19,7 +19,6 @@ public:
 
 };
 
-}
-
-}
+} //namespace Base
+} //namespace INZ_project
 #endif // !defined(EA_ECD19921_6648_4524_87B9_6086B11E331C__INCLUDED_)

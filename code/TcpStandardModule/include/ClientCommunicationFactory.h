@@ -8,10 +8,14 @@
 #if !defined(EA_F72028D3_8BE8_4f0f_823B_D1BBE5AA96A8__INCLUDED_)
 #define EA_F72028D3_8BE8_4f0f_823B_D1BBE5AA96A8__INCLUDED_
 
-#include "ClientCommunication.h"
+#include <QList>
+#include <QString>
 
 namespace INZ_project {
 namespace TcpStandardModule {
+
+class ClientCommunication;
+
 class ClientCommunicationFactory
 {
 
@@ -26,7 +30,6 @@ public:
 
 };
 
-}
-
-}
+} //namespace TcpStandardModule
+} //namespace INZ_project
 #endif // !defined(EA_F72028D3_8BE8_4f0f_823B_D1BBE5AA96A8__INCLUDED_)

@@ -7,7 +7,8 @@
 
 #include "DataProviderFactory.h"
 
-using INZ_project::Base::DataProviderFactory;
+namespace INZ_project {
+namespace Base {
 
 DataProviderFactory::DataProviderFactory()
 {
@@ -36,3 +37,6 @@ void DataProviderFactory::registerDataProvider(DataProvider* dataProvider,
 {
 
 }
+
+} //namespace Base
+} //namespace INZ_project

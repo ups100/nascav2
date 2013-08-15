@@ -24,7 +24,7 @@ public:
     virtual ~AAAFactory();
 
     static AAAModule* getAAAModule(const QString& id);
-    static QList<QString> getAAAModulesList();
+    static QList<QString>* getAAAModulesList();
     static AAAFactory* getInstance();
     static void registerAAAModule(AAAModule* module, QString id);
 private:

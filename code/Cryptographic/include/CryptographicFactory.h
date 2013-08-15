@@ -22,10 +22,10 @@ public:
     INZ_project::Cryptographic::SymetricAlgorithm *m_SymetricAlgorithm;
     INZ_project::Cryptographic::AsymetricAlgorithm *m_AsymetricAlgorithm;
 
-    static const QList<QString>& getASymAlgorithmList();
+    static const QList<QString>* getASymAlgorithmList();
     static CryptographicFactory* getInstance();
-    static const QList<QString>& getSymAlgorithmList();
-    static const QList<QString>& getSymetricAlgorithmList();
+    static const QList<QString>* getSymAlgorithmList();
+    static const QList<QString>* getSymetricAlgorithmList();
 
 };
 

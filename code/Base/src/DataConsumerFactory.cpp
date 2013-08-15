@@ -6,8 +6,10 @@
  */
 
 #include "DataConsumerFactory.h"
+#include "DataConsumer.h"
 
-using INZ_project::Base::DataConsumerFactory;
+namespace INZ_project {
+namespace Base {
 
 DataConsumerFactory::DataConsumerFactory()
 {
@@ -36,3 +38,6 @@ void DataConsumerFactory::registerDataConsumer(DataConsumer* consumer,
 {
 
 }
+
+} //namespace Base
+} //namespace INZ_project

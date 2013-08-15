@@ -7,7 +7,8 @@
 
 #include "IcingaSender.h"
 
-using INZ_project::IcingaSenderModule::IcingaSender;
+namespace INZ_project {
+namespace IcingaSenderModule {
 
 IcingaSender::IcingaSender()
 {
@@ -19,7 +20,7 @@ IcingaSender::~IcingaSender()
 
 }
 
-DataConsumer* IcingaSender::clone()
+INZ_project::Base::DataConsumer* IcingaSender::clone()
 {
 
     return NULL;
@@ -30,7 +31,8 @@ void IcingaSender::close()
 
 }
 
-void IcingaSender::consumeData(Client* client, DataPortion data)
+void consumeData(INZ_project::Base::Client* client,
+        INZ_project::Base::DataPortion data)
 {
 
 }
@@ -39,3 +41,6 @@ void IcingaSender::init(int argc, char ** argv)
 {
 
 }
+
+} //namespace Base
+} //namespace INZ_project

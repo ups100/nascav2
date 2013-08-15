@@ -1,10 +1,10 @@
 MESSAGE( "Building Base target." )
 
 #directories with headers for this target
-INCLUDE_DIRECTORIES( 	${QT_INCLUDES}
-						${Boost_INCLUDE_DIRS}
-						${UXP1A_SOURCE_DIR}/Client/include
-						${UXP1A_SOURCE_DIR}/Shared/include 
+INCLUDE_DIRECTORIES( 	${Boost_INCLUDE_DIRS}
+						${INZ_SOURCE_DIR}/AAA/include
+						${INZ_SOURCE_DIR}/FactoryRegistration/include
+						${INZ_SOURCE_DIR}/Base/include
 )
 
 #if some class inherits QObject (has Q_OBJECT macro) add it's header file here
@@ -17,7 +17,8 @@ SET( BASE_SRC
 		${INZ_SOURCE_DIR}/Base/src/DataPortion.cpp
 		${INZ_SOURCE_DIR}/Base/src/DataProvider.cpp
 		${INZ_SOURCE_DIR}/Base/src/DataProviderFactory.cpp
-		${INZ_SOURCE_DIR}/Base/src/MyNascaMain.cpp		
+		${INZ_SOURCE_DIR}/Base/src/MyNascaMain.cpp
+		${INZ_SOURCE_DIR}/Base/src/main.cpp	
 )
 
 add_executable( base ${BASE_SRC} )

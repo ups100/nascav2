@@ -8,11 +8,17 @@
 #if !defined(EA_388BCAB5_7025_4448_8149_748AA8F8721B__INCLUDED_)
 #define EA_388BCAB5_7025_4448_8149_748AA8F8721B__INCLUDED_
 
+#include "DataPortion.h"
+
 namespace INZ_project {
 namespace Base {
+
+class Client;
+class DataConsumer;
+
+
 class DataConsumer
 {
-
 public:
     DataConsumer();
     virtual ~DataConsumer();
@@ -24,7 +30,6 @@ public:
 
 };
 
-}
-
-}
+} //namespace Base
+} //namespace INZ_project
 #endif // !defined(EA_388BCAB5_7025_4448_8149_748AA8F8721B__INCLUDED_)

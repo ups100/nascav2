@@ -8,7 +8,12 @@ INCLUDE_DIRECTORIES( 				${Boost_INCLUDE_DIRS}
 
 #if some class inherits QObject (has Q_OBJECT macro) add it's header file here
 SET( TCPSTANDARDMODULE_SRC
-		${INZ_SOURCE_DIR}/IcingaSenderModule/src/IcingaSender.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/ClientCommunication.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/ClientCommunicationFactory.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/ClientConnection.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/TcpReceiver.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/TcpServer.cpp
+
 )
 
 

@@ -7,7 +7,8 @@
 
 #include "DataChannel.h"
 
-using INZ_project::Base::DataChannel;
+namespace INZ_project {
+namespace Base {
 
 DataChannel::DataChannel()
 {
@@ -18,3 +19,6 @@ DataChannel::~DataChannel()
 {
 
 }
+
+} //namespace Base
+} //namespace INZ_project

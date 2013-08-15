@@ -12,9 +12,9 @@
 
 namespace INZ_project {
 namespace TcpStandardModule {
+
 class ClientCommunication
 {
-
 public:
     ClientCommunication();
     virtual ~ClientCommunication();
@@ -24,7 +24,6 @@ public:
 
 };
 
-}
-
-}
+} //namespace TcpStandardModule
+} //namespace INZ_project
 #endif // !defined(EA_F3F6B536_D461_46af_B80E_686AFF726757__INCLUDED_)

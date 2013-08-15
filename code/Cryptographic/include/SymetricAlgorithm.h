@@ -8,6 +8,8 @@
 #if !defined(EA_7969CDE2_2366_4739_9A40_DB426E0C42FC__INCLUDED_)
 #define EA_7969CDE2_2366_4739_9A40_DB426E0C42FC__INCLUDED_
 
+#include <QByteArray>
+
 namespace INZ_project {
 namespace Cryptographic {
 class SymetricAlgorithm

@@ -7,7 +7,8 @@
 
 #include "DataPortion.h"
 
-using INZ_project::Base::DataPortion;
+namespace INZ_project {
+namespace Base {
 
 DataPortion::DataPortion()
 {
@@ -24,3 +25,6 @@ const QString& DataPortion::getIcingaFormated()
 
     return NULL;
 }
+
+} //namespace Base
+} //namespace INZ_project
