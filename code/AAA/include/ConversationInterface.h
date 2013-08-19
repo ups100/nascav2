@@ -1,6 +1,6 @@
 /**
  * @file  ConversationInterface.h
- * @brief  Definition of the Class ConversationInterface
+ * @brief  Definition of the Class INZ_project::AAA::ConversationInterface
  * @date  13-sie-2013 17:38:10
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
@@ -13,15 +13,36 @@
 namespace INZ_project {
 namespace AAA {
 
+/**
+ * @brief Base class for conversation between AAAModule and client
+ */
 class ConversationInterface
 {
 
 public:
+    /**
+     * @brief Constructor
+     */
     ConversationInterface();
+
+    /**
+     * @brief Destructor
+     */
     virtual ~ConversationInterface();
 
-    virtual QByteArray providePassword() =0;
-    virtual QByteArray provideUserName() =0;
+    /**
+     * @brief This function should collect a password from user and return it.
+     * @note This function should not cache a password but each time it's called
+     * it should ask client once again
+     */
+    virtual QByteArray providePassword() = 0;
+
+    /**
+     * @brief This function should collect a user name from client and return it.
+     * @note This function should not cache a user name but each time it's called
+     * it should ask client once again
+     */
+    virtual QByteArray provideUserName() = 0;
 
 };
 
