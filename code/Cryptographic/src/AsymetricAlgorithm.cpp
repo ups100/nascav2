@@ -1,13 +1,14 @@
 /**
- * @file  AsymetricAlgorithm.h
- * @brief  Implementation of the Class AsymetricAlgorithm
+ * @file  AsymetricAlgorithm.cpp
+ * @brief  Implementation of the Class INZ_project::Cryptographic::AsymetricAlgorithm
  * @date  Created on:      13-sie-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
 
 #include "AsymetricAlgorithm.h"
 
-using INZ_project::Cryptographic::AsymetricAlgorithm;
+namespace INZ_project {
+namespace Cryptographic {
 
 AsymetricAlgorithm::AsymetricAlgorithm()
 {
@@ -19,19 +20,22 @@ AsymetricAlgorithm::~AsymetricAlgorithm()
 
 }
 
-QByteArray AsymetricAlgorithm::encrypt(const QByteArray& plain)
-{
-
-    return NULL;
-}
-
 const QByteArray& AsymetricAlgorithm::getPrivateKey()
 {
 
-    return NULL;
+    return m_privateKey;
+}
+
+const QByteArray& AsymetricAlgorithm::getPublicKey()
+{
+
+    return m_publicKey;
 }
 
 void AsymetricAlgorithm::setPublicKey(const QByteArray& partnerKey)
 {
-
+    m_publicKey = partnerKey;
 }
+
+} //namespace Cryptographic
+} //namespace INZ_project

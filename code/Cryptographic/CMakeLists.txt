@@ -3,6 +3,7 @@ MESSAGE( "Building Cryptographic target." )
 #directories with headers for this target
 INCLUDE_DIRECTORIES( 				${Boost_INCLUDE_DIRS}
 						${INZ_SOURCE_DIR}/Cryptographic/include
+						${INZ_SOURCE_DIR}/Logger/include
 )
 
 #if some class inherits QObject (has Q_OBJECT macro) add it's header file here

@@ -1,6 +1,6 @@
 /**
  * @file  AsymetricAlgorithm.h
- * @brief  Definition of the Class AsymetricAlgorithm
+ * @brief  Definition of the Class INZ_project::Cryptographic::AsymetricAlgorithm
  * @date  13-sie-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
@@ -12,24 +12,86 @@
 
 namespace INZ_project {
 namespace Cryptographic {
+
+/**
+ * @brief Base class for all asymmetric algorithms
+ * @warning This class is not thread-safe.
+ */
 class AsymetricAlgorithm
 {
 
 public:
+    /**
+     * @brief Constructor
+     */
     AsymetricAlgorithm();
+
+    /**
+     * @brief Destructor
+     */
     virtual ~AsymetricAlgorithm();
 
-    virtual AsymetricAlgorithm* clone() =0;
-    virtual QByteArray decrypt(const QByteArray& encrypted) =0;
-    QByteArray encrypt(const QByteArray& plain);
-    virtual void generateKeys() =0;
-    const QByteArray& getPrivateKey();
-    virtual const QByteArray& getPublicKey() =0;
-    void setPublicKey(const QByteArray& partnerKey);
+    /**
+     * @brief Creates a deep copy of this object
+     * @return deep copy of this object
+     */
+    virtual AsymetricAlgorithm* clone() = 0;
 
+    /**
+     * @brief Decrypt a message using set private key
+     * @param[in] encrypted message
+     * @return decrypted message
+     */
+    virtual QByteArray decrypt(const QByteArray& encrypted) = 0;
+
+    /**
+     * @brief Encrypts a message using set public key
+     * @param[in] plain text message to be encrypted
+     * @return encrypted message
+     */
+    virtual QByteArray encrypt(const QByteArray& plain) = 0;
+
+    /**
+     * @brief Generates a pair of public and private key
+     * @note For proper functionality all subclass should
+     * write keys value to m_privateKey and m_publicKey
+     */
+    virtual void generateKeys() = 0;
+
+    /**
+     * @brief Gets the private key
+     * @return Generated private key or
+     * empty object if key has not been generated
+     */
+    const QByteArray& getPrivateKey();
+
+    /**
+     * @brief Gets the public key
+     * @return Generated public key or
+     * empty object if key has not been generated
+     */
+    const QByteArray& getPublicKey();
+
+    /**
+     * @brief Sets public key
+     * @param[in] partnerKey key to be set
+     * @note Default implementation sets only m_publicKey to new value
+     * if subclass need to take an action when key has changed override this method
+     */
+    virtual void setPublicKey(const QByteArray& partnerKey);
+
+protected:
+    /**
+     * @brief Public key
+     */
+    QByteArray m_publicKey;
+
+    /**
+     * @brief Private key
+     */
+    QByteArray m_privateKey;
 };
 
-}
-
-}
+} //namespace Cryptographic
+} //namespace INZ_project
 #endif // !defined(EA_EB7D702C_2C96_4fe9_AC1C_5DC5DDE2C809__INCLUDED_)
