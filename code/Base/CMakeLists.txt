@@ -4,6 +4,7 @@ MESSAGE( "Building Base target." )
 INCLUDE_DIRECTORIES( 	${Boost_INCLUDE_DIRS}
 						${INZ_SOURCE_DIR}/AAA/include
 						${INZ_SOURCE_DIR}/FactoryRegistration/include
+						${INZ_SOURCE_DIR}/Logger/include
 						${INZ_SOURCE_DIR}/Base/include
 )
 
@@ -24,7 +25,8 @@ SET( BASE_SRC
 add_executable( base ${BASE_SRC} )
 
 #here add some additional qt modules
-TARGET_LINK_LIBRARIES(	base
+TARGET_LINK_LIBRARIES(	base 
+		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/liblogger.a
 		${Boost_LIBRARIES}
 )
 

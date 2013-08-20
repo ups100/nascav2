@@ -23,9 +23,9 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
 
 #subdirectories
 add_subdirectory(AAA)
+add_subdirectory(Logger)
 add_subdirectory(Base)
 add_subdirectory(Cryptographic)
 add_subdirectory(IcingaSenderModule)
 add_subdirectory(TcpStandardModule)
-add_subdirectory(Logger)
 add_subdirectory(doxygen)
