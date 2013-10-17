@@ -1,7 +1,7 @@
 /**
  * @file  DataConsumerFactory.h
  * @brief  Definition of the Class INZ_project::Base::DataConsumerFactory
- * @date  13-sie-2013 17:38:11
+ * @date  13-08-2013 17:38:11
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
 
