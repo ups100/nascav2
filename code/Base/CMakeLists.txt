@@ -18,11 +18,13 @@ SET( BASE_SRC
 		${INZ_SOURCE_DIR}/Base/src/DataPortion.cpp
 		${INZ_SOURCE_DIR}/Base/src/DataProvider.cpp
 		${INZ_SOURCE_DIR}/Base/src/DataProviderFactory.cpp
-		${INZ_SOURCE_DIR}/Base/src/MyNascaMain.cpp
-		${INZ_SOURCE_DIR}/Base/src/main.cpp	
+		${INZ_SOURCE_DIR}/Base/src/MyNscaMain.cpp
+		${INZ_SOURCE_DIR}/Base/src/main.cpp
 		${INZ_SOURCE_DIR}/Base/src/DataFile.cpp
 		${INZ_SOURCE_DIR}/Base/src/ReadPortion.cpp
+		${INZ_SOURCE_DIR}/Base/include/DataConsumer.h
 		${INZ_SOURCE_DIR}/Base/include/DataFile.h
+		${INZ_SOURCE_DIR}/Base/include/MyNscaMain.h
 )
 
 add_executable( base ${BASE_SRC} )
