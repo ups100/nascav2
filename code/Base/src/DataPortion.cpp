@@ -6,12 +6,23 @@
  */
 
 #include "DataPortion.h"
+#include "ClientSession.h"
+#include "DataProvider.h"
 
 namespace INZ_project {
 namespace Base {
 
-DataPortion::DataPortion()
+DataPortion::DataPortion(QList<QString>* logs, const ClientSession* client,
+        const DataProvider* provider)
+:m_client(client->getClientId()), m_provider(provider->getProviderId()), m_logs(logs)
 {
+    for(QList<QString>::iterator it = m_logs->begin();
+            it != m_logs->end(); ++it) {
+        if(!it->endsWith("\n")) {
+            it->append("\n");
+        }
+        m_size += it->size();
+    }
 
 }
 
@@ -20,11 +31,23 @@ DataPortion::~DataPortion()
 
 }
 
-const QString& DataPortion::getIcingaFormated()
+const QList<QString>& DataPortion::getIcingaFormated() const
 {
 
-    return NULL;
+    return *m_logs;
 }
 
+qint64 DataPortion::getSize() const
+{
+    return m_size;
+}
+const QString& DataPortion::getClient() const
+{
+    return m_client;
+}
+const QString& DataPortion::getProvider() const
+{
+    return m_provider;
+}
 } //namespace Base
 } //namespace INZ_project

@@ -1,7 +1,7 @@
 /**
  * @file  DataPortion.h
  * @brief  Definition of the Class DataPortion
- * @date  13-sie-2013 17:38:11
+ * @date  07-10-2013 19:55:36
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
 
@@ -9,18 +9,77 @@
 #define EA_3F47DABF_3EBE_4bb2_82FB_628B9CD3C449__INCLUDED_
 
 #include <QString>
+#include <QList>
+#include <boost/shared_ptr.hpp>
 
 namespace INZ_project {
 namespace Base {
+
+class ClientSession;
+class DataProvider;
+
 class DataPortion
 {
 
 public:
-    DataPortion();
+    /**
+     * @brief Constructor
+     * @param[in] logs to be stored in this data portion.
+     * This object takes the ownership of this param
+     * @param[in] client who send this logs.
+     * This object does NOT take the ownership of this param
+     * @param[in] provider which received those logs
+     * This object does NOT take the ownership of this param
+     */
+    DataPortion(QList<QString>* logs, const ClientSession* client,
+            const DataProvider* provider);
+
+    /**
+     * @brief Destructor
+     */
     virtual ~DataPortion();
 
-    const QString& getIcingaFormated();
+    /**
+     * @brief Get's the logs in icinga suitable format.
+     * @return icinga formated logs
+     */
+    const QList<QString>& getIcingaFormated() const;
 
+    /**
+     * @brief Get's the size of logs portion
+     * @return size of logs
+     */
+    qint64 getSize() const;
+
+    /**
+     * @brief Get's the id of client which send this data
+     * @return client id
+     */
+    const QString& getClient() const;
+
+    /**
+     * @brief Gets the id of provider which received this logs portion
+     * @return provider id
+     */
+    const QString& getProvider() const;
+
+private:
+    /**
+     * @brief Client ID
+     */
+    QString m_client;
+    /**
+     * @brief Provider ID
+     */
+    QString m_provider;
+    /**
+     * @brief Size of this data portion
+     */
+    qint64 m_size;
+    /**
+     * @brief Logs stored in this data portion
+     */
+    boost::shared_ptr<QList<QString> > m_logs;
 };
 
 } //namespace Base
