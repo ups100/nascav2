@@ -9,11 +9,12 @@
 #define EA_E50F9419_49C3_4ff4_83E4_7F91A1A4D666__INCLUDED_
 
 #include "ConversationInterface.h"
-#include "Client.h"
+#include <string>
+#include <stdexcept>
 
 namespace INZ_project {
 namespace Base {
-class Client;
+class ClientSession;
 }
 
 namespace AAA {
@@ -41,11 +42,11 @@ public:
     virtual AAAModule* clone() = 0;
 
     /**
-     * @brief Gets the authorized client
-     * @return New instance of Client class or NULL if
-     * client has not been authorized
+     * @brief Sets the additional data for client which should be authorized
+     * @throws AdditionalDataException if additional data is not suitable
+     * @note You have to implement this function in sub class
      */
-    virtual Base::Client* getAuthorizedClient() = 0;
+    virtual void setAdditionalData(const QString &additionalData) = 0;
 
     /**
      * @brief Runs the identification and authorization process
@@ -58,6 +59,22 @@ public:
      * @note This object does not take the ownership of conv param
      */
     void setConversationInterface(ConversationInterface* conv);
+
+    /**
+     * @brief Exception class for errors occurred while parsing additional data
+     */
+    class AdditionalDataException : public std::runtime_error
+    {
+    public:
+        /**
+         * @brief Constructor
+         * @param[in] arg exception string
+         */
+        explicit AdditionalDataException(const std::string& arg)
+                : std::runtime_error(arg)
+        {
+        }
+    };
 
 protected:
 

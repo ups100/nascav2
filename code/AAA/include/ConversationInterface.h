@@ -31,18 +31,20 @@ public:
     virtual ~ConversationInterface();
 
     /**
-     * @brief This function should collect a password from user and return it.
-     * @note This function should not cache a password but each time it's called
-     * it should ask client once again
+     * @brief Sends the message to the client which is authorized
+     * @param[in] message to be sent
+     * @return Number of bytes sent or -1 if an error occurred.
      */
-    virtual QByteArray providePassword() = 0;
+    virtual int sendMessage(const QByteArray& message) = 0;
 
     /**
-     * @brief This function should collect a user name from client and return it.
-     * @note This function should not cache a user name but each time it's called
-     * it should ask client once again
+     * @brief Receives the message from client
+     * @param[in] timeout number of mili seconds to wait for message.
+     * if -1 passed waits forever.
+     * @param[out] ok value to be set. True if message has been received,
+     * false if an error occurred or timeout reached
      */
-    virtual QByteArray provideUserName() = 0;
+    virtual QByteArray receiveMessage(qint64 timeout = -1,bool *ok = 0L) = 0;
 
 };
 
