@@ -21,6 +21,7 @@ SET( BASE_SRC
 		${INZ_SOURCE_DIR}/Base/src/MyNascaMain.cpp
 		${INZ_SOURCE_DIR}/Base/src/main.cpp	
 		${INZ_SOURCE_DIR}/Base/src/DataFile.cpp
+		${INZ_SOURCE_DIR}/Base/src/ReadPortion.cpp
 		${INZ_SOURCE_DIR}/Base/include/DataFile.h
 )
 
