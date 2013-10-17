@@ -10,7 +10,7 @@ INCLUDE_DIRECTORIES( 	${Boost_INCLUDE_DIRS}
 
 #if some class inherits QObject (has Q_OBJECT macro) add it's header file here
 SET( BASE_SRC
-		${INZ_SOURCE_DIR}/Base/src/Client.cpp
+		${INZ_SOURCE_DIR}/Base/src/ClientSession.cpp
 		${INZ_SOURCE_DIR}/Base/src/ConfigurationParser.cpp
 		${INZ_SOURCE_DIR}/Base/src/DataChannel.cpp
 		${INZ_SOURCE_DIR}/Base/src/DataConsumer.cpp
@@ -30,6 +30,7 @@ add_executable( base ${BASE_SRC} )
 #here add some additional qt modules
 TARGET_LINK_LIBRARIES(	base 
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/liblogger.a
+		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libaaamodule.a
 		${Boost_LIBRARIES}
 )
 

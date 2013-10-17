@@ -1,11 +1,11 @@
 /**
- * @file  Client.h
+ * @file  ClientSession.h
  * @brief  Implementation of the Class ClientSession
  * @date  17-10-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
 
-#include "Client.h"
+#include "ClientSession.h"
 #include "DataChannel.h"
 #include "LogEntry.h"
 #include "DataProvider.h"

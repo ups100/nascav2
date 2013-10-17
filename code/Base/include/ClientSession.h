@@ -1,5 +1,5 @@
 /**
- * @file  Client.h
+ * @file  ClientSession.h
  * @brief  Definition of the Class ClientSession
  * @date  13-sie-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
