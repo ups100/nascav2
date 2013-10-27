@@ -8,6 +8,8 @@
 #ifndef __INZ_PROJECT_REGISTRATOR_H__
 #define __INZ_PROJECT_REGISTRATOR_H__
 
+#include <boost/function.hpp>
+
 namespace INZ_project {
 namespace FactoryRegistration {
 
@@ -48,7 +50,8 @@ template<typename ToRegister, typename BaseClass, typename NameClass,
 Registrator<ToRegister, BaseClass, NameClass, FactoryClass>::Registrator()
 {
     //dodac loga
-    FactoryClass::registerFunc(NameClass::getName(), creator);
+    FactoryClass::registerFunc(boost::function<BaseClass* ()>(creator),
+            NameClass::getName());
 }
 
 template<typename ToRegister, typename BaseClass, typename NameClass,
