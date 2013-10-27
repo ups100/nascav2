@@ -19,7 +19,7 @@
 #define ASYMETRIC_ALGORITHM(NewAlgorithm, NewAlgorithmName) \
     struct AsymetricAlgorithm ## NewAlgorithmName ## AsymetricAlgorithm \
     { static const char* getName() { return #NewAlgorithmName; } }; \
-    REGISTER_SUBCLASS(NewModule, \
+    REGISTER_SUBCLASS(NewAlgorithm, \
             INZ_project::Cryptographic::AsymetricAlgorithm, \
             AsymetricAlgorithm ## NewAlgorithmName ## AsymetricAlgorithm, \
             INZ_project::Cryptographic::CryptographicFactory)

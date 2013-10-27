@@ -19,7 +19,7 @@
 #define SYMETRIC_ALGORITHM(NewAlgorithm, NewAlgorithmName) \
     struct SymetricAlgorithm ## NewAlgorithmName ## SymetricAlgorithm \
     { static const char* getName() { return #NewAlgorithmName; } }; \
-    REGISTER_SUBCLASS(NewModule, \
+    REGISTER_SUBCLASS(NewAlgorithm, \
             INZ_project::Cryptographic::SymetricAlgorithm, \
             SymetricAlgorithm ## NewAlgorithmName ## SymetricAlgorithm, \
             INZ_project::Cryptographic::CryptographicFactory)

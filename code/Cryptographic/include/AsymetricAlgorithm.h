@@ -9,6 +9,7 @@
 #define EA_EB7D702C_2C96_4fe9_AC1C_5DC5DDE2C809__INCLUDED_
 
 #include <QByteArray>
+#include <stdexcept>
 
 namespace INZ_project {
 namespace Cryptographic {
@@ -40,23 +41,27 @@ public:
     /**
      * @brief Decrypt a message using set private key
      * @param[in] encrypted message
+     * @param[in] usePublic use public key instead of private
      * @return decrypted message
      */
-    virtual QByteArray decrypt(const QByteArray& encrypted) = 0;
+    virtual QByteArray decrypt(const QByteArray& encrypted, bool usePublic=false) = 0;
 
     /**
      * @brief Encrypts a message using set public key
      * @param[in] plain text message to be encrypted
+     * @param[in] usePrivate key instead of public
      * @return encrypted message
      */
-    virtual QByteArray encrypt(const QByteArray& plain) = 0;
+    virtual QByteArray encrypt(const QByteArray& plain, bool usePrivate=false) = 0;
 
     /**
      * @brief Generates a pair of public and private key
+     * @param[in] keySize - size of the key to be generated (in bytes)
+     * @return Public key
      * @note For proper functionality all subclass should
      * write keys value to m_privateKey and m_publicKey
      */
-    virtual void generateKeys() = 0;
+    virtual const QByteArray& generateKeys(int keySize = -1) = 0;
 
     /**
      * @brief Gets the private key
@@ -79,6 +84,22 @@ public:
      * if subclass need to take an action when key has changed override this method
      */
     virtual void setPublicKey(const QByteArray& partnerKey);
+
+    /**
+     * @brief Exception class for errors occurred while parsing
+     */
+    class AsymmetricAlgorithmException : public std::runtime_error
+    {
+    public:
+        /**
+         * @brief Constructor
+         * @param[in] arg exception string
+         */
+        explicit AsymmetricAlgorithmException(const std::string& arg)
+                : std::runtime_error(arg)
+        {
+        }
+    };
 
 protected:
     /**
