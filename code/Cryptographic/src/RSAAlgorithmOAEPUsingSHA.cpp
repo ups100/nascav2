@@ -101,7 +101,7 @@ QByteArray RSAAlgorithmOAEPUsingSHA::decrypt(const QByteArray& encrypted,
         AutoSeededRandomPool rng;
 
         StringSource(reinterpret_cast<const byte*>(encrypted.data()),
-                encrypted.length(),
+                encrypted.length(), true,
                 new PK_DecryptorFilter(rng, m_decryptor,
                         new StringSink(plain)));
 
@@ -126,7 +126,7 @@ QByteArray RSAAlgorithmOAEPUsingSHA::encrypt(const QByteArray& plain,
         AutoSeededRandomPool rng;
 
         StringSource(reinterpret_cast<const byte*>(plain.data()),
-                plain.length(),
+                plain.length(), true,
                 new PK_EncryptorFilter(rng, m_encryptor,
                         new StringSink(encrypted)));
 

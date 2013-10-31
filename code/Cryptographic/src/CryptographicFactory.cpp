@@ -24,13 +24,13 @@ CryptographicFactory::~CryptographicFactory()
 
 }
 
-QList<QString> CryptographicFactory::getASymAlgorithmList()
+QList<QString> CryptographicFactory::getAsymAlgorithmList()
 {
     QMutexLocker locker(&getInstance()->m_mutexAsym);
     return getInstance()->m_asym.keys();
 }
 
-AsymetricAlgorithm* CryptographicFactory::getASymAlgorithm(const QString& id)
+AsymetricAlgorithm* CryptographicFactory::getAsymAlgorithm(const QString& id)
 {
 
     CryptographicFactory *instance = CryptographicFactory::getInstance();

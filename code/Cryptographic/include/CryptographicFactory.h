@@ -35,14 +35,14 @@ public:
      * @brief Gets the list of accessible Asymmetric algorithms
      * @return List of accessible Asymmetric algorithms
      */
-    static QList<QString> getASymAlgorithmList();
+    static QList<QString> getAsymAlgorithmList();
 
     /**
      * @brief Gets the Asymmetric registered with passed id
      * @param[in] id of the object
      * @return Object instance or NULL if no such object registered.
      */
-    static AsymetricAlgorithm* getASymAlgorithm(const QString& id);
+    static AsymetricAlgorithm* getAsymAlgorithm(const QString& id);
 
     /**
      * @brief Gets the instance of this object.

@@ -26,8 +26,8 @@ add_library( cryptographic STATIC ${CRYPTOGRAPHIC_SRC} )
 #here add some additional qt modules
 TARGET_LINK_LIBRARIES(	cryptographic
 		${Boost_LIBRARIES}
-		${cryptopp_LDDFLAGS}
-		${cryptopp_LIBRARY}
+		${cryptopp_LDFLAGS}
+		${cryptopp_LIBRARIES}
 )
 
 qt5_use_modules(cryptographic Core)
