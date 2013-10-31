@@ -20,6 +20,7 @@ SET( CRYPTOGRAPHIC_SRC
 		${INZ_SOURCE_DIR}/Cryptographic/src/RSAAlgorithmOAEPUsingSHA.cpp
 )
 
+SET(CMAKE_CXX_FLAGS -Wall)
 
 add_library( cryptographic STATIC ${CRYPTOGRAPHIC_SRC} )
 
@@ -31,3 +32,22 @@ TARGET_LINK_LIBRARIES(	cryptographic
 )
 
 qt5_use_modules(cryptographic Core)
+
+
+SET( CRYPTOGRAPHIC_SRC
+		${CRYPTOGRAPHIC_SRC}
+		${INZ_SOURCE_DIR}/Cryptographic/src/mainTest.cpp
+)
+
+add_executable( cryptographicTest ${CRYPTOGRAPHIC_SRC} )
+message("${cryptopp_LDDFLAGS}")
+message("${cryptopp_LIBRARIES}")
+#here add some additional qt modules
+TARGET_LINK_LIBRARIES(	cryptographicTest
+		${Boost_LIBRARIES}
+		${cryptopp_LDFLAGS}
+		${cryptopp_LIBRARIES}
+		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/liblogger.a
+)
+
+qt5_use_modules(cryptographicTest Core)
