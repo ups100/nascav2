@@ -308,14 +308,14 @@ ConfigurationParser::Token ConfigurationParser::getTokenType(
         const QStringRef& tokenString)
 {
     QHash<QString, Token>::iterator it = m_tokenStrings.find(
-            *tokenString.string());
+            tokenString.toString());
     return it == m_tokenStrings.end() ? OTHER : *it;
 }
 
 bool ConfigurationParser::parseXMLConf(QXmlStreamReader &stream)
 {
     try {
-        while (!stream.atEnd()) {
+        while (!stream.atEnd()&&!stream.hasError()) {
             QXmlStreamReader::TokenType token = stream.readNext();
             switch (token) {
                 case QXmlStreamReader::StartDocument:
@@ -328,8 +328,8 @@ bool ConfigurationParser::parseXMLConf(QXmlStreamReader &stream)
                             break;
                         default:
                             LOG_ENTRY(MyLogger::ERROR,
-                                    "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
-                            throw ParserException("Invalid token");
+                                    "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
+                            throw ParserException("Invalid token ");
                     }
                     break;
             }
@@ -366,9 +366,13 @@ void ConfigurationParser::parseNscaConfig(QXmlStreamReader &stream)
                     case CLIENTS:
                         parseClients(stream);
                         break;
+
+                    case ROUTES:
+                        parseRoutes(stream);
+                        break;
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -411,7 +415,7 @@ void ConfigurationParser::parseDataProviders(QXmlStreamReader &stream)
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -464,7 +468,7 @@ void ConfigurationParser::parseDataProvider(QXmlStreamReader &stream,
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -514,7 +518,7 @@ void ConfigurationParser::parseDataConsumers(QXmlStreamReader &stream)
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -567,15 +571,15 @@ void ConfigurationParser::parseDataConsumer(QXmlStreamReader &stream,
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
 
             case QXmlStreamReader::EndElement:
-                if (getTokenType(stream.name()) == DATA_PROVIDER) {
+                if (getTokenType(stream.name()) == DATA_CONSUMER) {
 
-                    if (m_consumerGroups.contains(id)) {
+                    if (m_consumerGroups[groupName].contains(id)) {
                         LOG_ENTRY(MyLogger::ERROR,
                                 "Id: "<<id<<" already exist in group "<<groupName);
                         throw ParserException("Id already taken");
@@ -618,7 +622,7 @@ void ConfigurationParser::parseClients(QXmlStreamReader &stream)
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -671,13 +675,13 @@ void ConfigurationParser::parseClient(QXmlStreamReader &stream,
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
 
             case QXmlStreamReader::EndElement:
-                if (getTokenType(stream.name()) == CLIENTS) {
+                if (getTokenType(stream.name()) == CLIENT) {
                     return;
                 }
                 break;
@@ -724,7 +728,7 @@ void ConfigurationParser::parseAAAData(QXmlStreamReader &stream,
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -757,7 +761,7 @@ void ConfigurationParser::parseRoutes(QXmlStreamReader &stream)
 
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -792,7 +796,7 @@ void ConfigurationParser::parseRoute(QXmlStreamReader &stream)
 
     QString via;
     if (attributes.hasAttribute("via")) {
-        client = attributes.value("via").toString();
+        via = attributes.value("via").toString();
     } else {
         LOG_ENTRY(MyLogger::ERROR,
                 "No via attribute in route. Line: "<<stream.lineNumber());
@@ -801,7 +805,7 @@ void ConfigurationParser::parseRoute(QXmlStreamReader &stream)
 
     QString to;
     if (attributes.hasAttribute("to")) {
-        client = attributes.value("to").toString();
+        to = attributes.value("to").toString();
     } else {
         LOG_ENTRY(MyLogger::ERROR,
                 "No to attribute in route. Line: "<<stream.lineNumber());
@@ -817,7 +821,7 @@ void ConfigurationParser::parseRoute(QXmlStreamReader &stream)
                 switch (getTokenType(stream.name())) {
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<*(stream.name().string()) <<" at: "<<stream.lineNumber());
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
                         throw ParserException("Invalid token");
                 }
                 break;
@@ -841,6 +845,7 @@ void ConfigurationParser::submitRoute(const QString& from, const QString& via,
         const QString& to)
 {
     QString fromGroup, fromMember;
+
     try {
         fromGroup = this->getGroup(from);
         fromMember = this->getGroupMember(from);
@@ -849,6 +854,7 @@ void ConfigurationParser::submitRoute(const QString& from, const QString& via,
                 e.what()<<" In client string. Skipping route " <<from<<" "<<via<<" "<<to<<".");
         return;
     }
+
     if (fromGroup == m_starString) {
         //this is route for all clients
         QList<QString> keys = m_clientGroups.keys();
@@ -887,14 +893,15 @@ bool ConfigurationParser::checkProgramConfiguration()
     QList<QString> aaaModules = AAA::AAAFactory::getAAAModulesList();
     QList<QString> groups = m_clientGroups.keys();
     foreach(QString group, groups) {
-        QList<QString> clients = m_clientGroups.keys();
+        QList<QString> clients = m_clientGroups[group].keys();
 
         foreach(QString clientStr, clients) {
             boost::shared_ptr<Client> client = m_clientGroups[group][clientStr];
+
             foreach(QString aaaModule, client->m_auth.keys()) {
                 if (!aaaModules.contains(aaaModule)) {
                     LOG_ENTRY(MyLogger::WARN,
-                            "No such AAAModule accessible"<<aaaModule);
+                            "No such AAAModule accessible: "<<aaaModule);
                     return false;
                 }
             }
@@ -916,7 +923,7 @@ bool ConfigurationParser::checkProgramConfiguration()
                     fromMember = this->getGroupMember(provider);
                 } catch (ParserException& e) {
                     LOG_ENTRY(MyLogger::WARN,
-                            e.what()<<" In provider string:"<<provider);
+                            e.what()<<" In provider string: "<<provider);
                     return false;
                 }
 
@@ -931,7 +938,7 @@ bool ConfigurationParser::checkProgramConfiguration()
                         //we have a single provider
                         if (!m_providerGroups[fromGroup].contains(fromMember)) {
                             LOG_ENTRY(MyLogger::WARN,
-                                    "No such provider: "<<fromMember<<"in group: "<<fromGroup);
+                                    "No such provider: "<<fromMember<<" in group: "<<fromGroup);
                             return false;
                         }
                     }
@@ -940,7 +947,7 @@ bool ConfigurationParser::checkProgramConfiguration()
                 //when there is no end for this route it's an error it shouldn't happen
                 if (client->m_routes[provider].empty()) {
                     LOG_ENTRY(MyLogger::ERROR,
-                            "Route via "<<provider<<" from client "<<clientStr<<"has no end.");
+                            "Route via "<<provider<<" from client "<<clientStr<<" has no end.");
                     return false;
                 }
 
@@ -967,7 +974,7 @@ bool ConfigurationParser::checkProgramConfiguration()
                             //we have a single provider
                             if (!m_consumerGroups[toGroup].contains(toMember)) {
                                 LOG_ENTRY(MyLogger::WARN,
-                                        "No such consumer: "<<toGroup<<"in group: "<<toMember);
+                                        "No such consumer: "<<toGroup<<" in group: "<<toMember);
                                 return false;
                             }
                         }
@@ -1002,7 +1009,7 @@ QString ConfigurationParser::getGroup(const QString& fullName)
             throw ParserException("Additional separate character in string.");
         }
 
-        ret = fullName.left(index - 1);
+        ret = fullName.left(index);
     }
 
     return ret;

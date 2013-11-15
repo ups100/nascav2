@@ -19,7 +19,7 @@ namespace Base {
 MyNscaMain* MyNscaMain::m_instance = 0L;
 
 MyNscaMain::MyNscaMain(int argc, char **argv)
-        : m_app(argc, argv)
+        : m_app(argc, argv), m_confPath("config.xml"), m_bufPath("buf")
 {
     if (m_instance == 0L) {
         m_instance = this;
@@ -95,7 +95,7 @@ int MyNscaMain::startOnlyConsumers()
 
 MyNscaMain::WhatToDo MyNscaMain::parseCommandLineArgs()
 {
-    return START_PROGRAM;
+    return CHECK_CONFIGURATION_FILE;
 }
 
 int MyNscaMain::startProgram()

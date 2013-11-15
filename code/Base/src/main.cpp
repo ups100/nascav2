@@ -1,4 +1,9 @@
+#include "MyNscaMain.h"
+
+using namespace INZ_project::Base;
+
 int main(int argc, char** argv)
 {
-    return 0;
+    MyNscaMain instance(argc, argv);
+    return instance.exec();
 }
