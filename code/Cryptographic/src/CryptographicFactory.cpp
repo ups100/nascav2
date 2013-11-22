@@ -35,8 +35,7 @@ AsymetricAlgorithm* CryptographicFactory::getAsymAlgorithm(const QString& id)
 
     CryptographicFactory *instance = CryptographicFactory::getInstance();
     QMutexLocker locker(&instance->m_mutexAsym);
-    return instance->m_asym.contains(id) ?
-            instance->m_asym[id]() : 0L;
+    return instance->m_asym.contains(id) ? instance->m_asym[id]() : 0L;
 }
 
 CryptographicFactory* CryptographicFactory::getInstance()
@@ -50,7 +49,6 @@ CryptographicFactory* CryptographicFactory::getInstance()
     return m_instance;
 }
 
-
 QList<QString> CryptographicFactory::getSymAlgorithmList()
 {
     QMutexLocker locker(&getInstance()->m_mutexSym);
@@ -62,8 +60,21 @@ SymetricAlgorithm* CryptographicFactory::getSymAlgorithm(const QString& id)
 
     CryptographicFactory *instance = CryptographicFactory::getInstance();
     QMutexLocker locker(&instance->m_mutexSym);
-    return instance->m_sym.contains(id) ?
-            instance->m_sym[id]() : 0L;
+    return instance->m_sym.contains(id) ? instance->m_sym[id]() : 0L;
+}
+
+QList<QString> CryptographicFactory::getSignAlgorithmList()
+{
+    QMutexLocker locker(&getInstance()->m_mutexSign);
+    return getInstance()->m_sign.keys();
+}
+
+SignAlgorithm* CryptographicFactory::getSignAlgorithm(const QString& id)
+{
+
+    CryptographicFactory *instance = CryptographicFactory::getInstance();
+    QMutexLocker locker(&instance->m_mutexSign);
+    return instance->m_sign.contains(id) ? instance->m_sign[id]() : 0L;
 }
 
 void CryptographicFactory::registerFunc(
@@ -90,6 +101,19 @@ void CryptographicFactory::registerFunc(
     }
 
     instance->m_sym.insert(id, function);
+}
+
+void CryptographicFactory::registerFunc(
+        boost::function<SignAlgorithm* ()> function, const QString& id)
+{
+    CryptographicFactory *instance = CryptographicFactory::getInstance();
+    QMutexLocker locker(&instance->m_mutexSign);
+    if (instance->m_sign.contains(id)) {
+        LOG_ENTRY(MyLogger::ERROR,
+                "Object with id="<<id<<" has been already registered." <<" Previous object overwritten.");
+    }
+
+    instance->m_sign.insert(id, function);
 }
 
 CryptographicFactory *CryptographicFactory::getInstanceHelper()

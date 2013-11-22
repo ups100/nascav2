@@ -86,7 +86,7 @@ public:
     virtual void setPublicKey(const QByteArray& partnerKey);
 
     /**
-     * @brief Exception class for errors occurred while parsing
+     * @brief Exception class for errors
      */
     class AsymmetricAlgorithmException : public std::runtime_error
     {
