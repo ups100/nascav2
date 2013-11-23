@@ -8,7 +8,7 @@
 #ifndef __CRYPTOGRAPHIC_SHA256_ALGORITHM_H__
 #define __CRYPTOGRAPHIC_SHA256_ALGORITHM_H__
 
-#include "SignAlgorithmRegister.h"
+#include "HashAlgorithmRegister.h"
 #include <crypto++/sha.h>
 
 namespace INZ_project {
@@ -18,7 +18,7 @@ namespace Cryptographic {
  * @brief Base class for all hash algorithms
  * @warning This class is not thread-safe.
  */
-SIGN_ALGORITHM( SHA256Algorithm , SHA_256)
+HASH_ALGORITHM( SHA256Algorithm , SHA_256)
 {
 
 public:
@@ -32,11 +32,11 @@ public:
      */
     virtual ~SHA256Algorithm();
 
-    virtual SignAlgorithm* clone();
+    virtual HashAlgorithm* clone();
 
-    virtual QByteArray generateSign(const QByteArray& message);
+    virtual QByteArray generateHash(const QByteArray& message);
 
-    virtual bool verifySign(const QByteArray& message, const QByteArray& sign);
+    virtual bool verifyHash(const QByteArray& message, const QByteArray& hash);
 
 private:
     CryptoPP::SHA256 m_hash;

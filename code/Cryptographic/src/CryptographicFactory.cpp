@@ -63,18 +63,18 @@ SymetricAlgorithm* CryptographicFactory::getSymAlgorithm(const QString& id)
     return instance->m_sym.contains(id) ? instance->m_sym[id]() : 0L;
 }
 
-QList<QString> CryptographicFactory::getSignAlgorithmList()
+QList<QString> CryptographicFactory::getHashAlgorithmList()
 {
-    QMutexLocker locker(&getInstance()->m_mutexSign);
-    return getInstance()->m_sign.keys();
+    QMutexLocker locker(&getInstance()->m_mutexHash);
+    return getInstance()->m_hash.keys();
 }
 
-SignAlgorithm* CryptographicFactory::getSignAlgorithm(const QString& id)
+HashAlgorithm* CryptographicFactory::getHashAlgorithm(const QString& id)
 {
 
     CryptographicFactory *instance = CryptographicFactory::getInstance();
-    QMutexLocker locker(&instance->m_mutexSign);
-    return instance->m_sign.contains(id) ? instance->m_sign[id]() : 0L;
+    QMutexLocker locker(&instance->m_mutexHash);
+    return instance->m_hash.contains(id) ? instance->m_hash[id]() : 0L;
 }
 
 void CryptographicFactory::registerFunc(
@@ -104,16 +104,16 @@ void CryptographicFactory::registerFunc(
 }
 
 void CryptographicFactory::registerFunc(
-        boost::function<SignAlgorithm* ()> function, const QString& id)
+        boost::function<HashAlgorithm* ()> function, const QString& id)
 {
     CryptographicFactory *instance = CryptographicFactory::getInstance();
-    QMutexLocker locker(&instance->m_mutexSign);
-    if (instance->m_sign.contains(id)) {
+    QMutexLocker locker(&instance->m_mutexHash);
+    if (instance->m_hash.contains(id)) {
         LOG_ENTRY(MyLogger::ERROR,
                 "Object with id="<<id<<" has been already registered." <<" Previous object overwritten.");
     }
 
-    instance->m_sign.insert(id, function);
+    instance->m_hash.insert(id, function);
 }
 
 CryptographicFactory *CryptographicFactory::getInstanceHelper()

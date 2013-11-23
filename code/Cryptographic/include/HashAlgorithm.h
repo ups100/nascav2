@@ -1,12 +1,12 @@
 /**
- * @file  SignAlgorithm.h
- * @brief  Definition of the Class INZ_project::Cryptographic::SignAlgorithm
+ * @file  HashAlgorithm.h
+ * @brief  Definition of the Class INZ_project::Cryptographic::HashAlgorithm
  * @date  21-11-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
 
-#ifndef __CRYPTOGRAPHIC_SIGN_ALGORITHM_H__
-#define __CRYPTOGRAPHIC_SIGN_ALGORITHM_H__
+#ifndef __CRYPTOGRAPHIC_Hash_ALGORITHM_H__
+#define __CRYPTOGRAPHIC_Hash_ALGORITHM_H__
 
 #include <QByteArray>
 #include <stdexcept>
@@ -18,52 +18,52 @@ namespace Cryptographic {
  * @brief Base class for all hash algorithms
  * @warning This class is not thread-safe.
  */
-class SignAlgorithm
+class HashAlgorithm
 {
 
 public:
     /**
      * @brief Constructor
      */
-    SignAlgorithm();
+    HashAlgorithm();
 
     /**
      * @brief Destructor
      */
-    virtual ~SignAlgorithm();
+    virtual ~HashAlgorithm();
 
     /**
      * @brief Creates a deep copy of this object
      * @return deep copy of this object
      */
-    virtual SignAlgorithm* clone() = 0;
+    virtual HashAlgorithm* clone() = 0;
 
     /**
-     * @brief Generates a sign for a given message
+     * @brief Generates a Hash for a given message
      * @param[in] message
      * @return hash of the message
      */
-    virtual QByteArray generateSign(const QByteArray& message) = 0;
+    virtual QByteArray generateHash(const QByteArray& message) = 0;
 
     /**
      * @brief Encrypts a message using set public key
-     * @param[in] plain text message to be encrypted
-     * @param[in] usePrivate key instead of public
-     * @return true if a signs is suitable for a given message, false otherwise
+     * @param[in] message
+     * @param[in] hash provided by sender
+     * @return true if a hash is suitable for a given message, false otherwise
      */
-    virtual bool verifySign(const QByteArray& message, const QByteArray& sign) = 0;
+    virtual bool verifyHash(const QByteArray& message, const QByteArray& hash) = 0;
 
     /**
      * @brief Exception class for errors occurred while parsing
      */
-    class SignAlgorithmException : public std::runtime_error
+    class HashAlgorithmException : public std::runtime_error
     {
     public:
         /**
          * @brief Constructor
          * @param[in] arg exception string
          */
-        explicit SignAlgorithmException(const std::string& arg)
+        explicit HashAlgorithmException(const std::string& arg)
                 : std::runtime_error(arg)
         {
         }
@@ -73,4 +73,4 @@ public:
 
 } //namespace Cryptographic
 } //namespace INZ_project
-#endif // __CRYPTOGRAPHIC_SIGN_ALGORITHM__
+#endif // __CRYPTOGRAPHIC_Hash_ALGORITHM__

@@ -1,21 +1,21 @@
 /**
- * @file  SignAlgorithm.cpp
- * @brief  Definition of the Class INZ_project::Cryptographic::SignAlgorithm
+ * @file  HashAlgorithm.cpp
+ * @brief  Definition of the Class INZ_project::Cryptographic::HashAlgorithm
  * @date  21-11-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
 
-#include "SignAlgorithm.h"
+#include "HashAlgorithm.h"
 
 namespace INZ_project {
 namespace Cryptographic {
 
-SignAlgorithm::SignAlgorithm()
+HashAlgorithm::HashAlgorithm()
 {
 
 }
 
-SignAlgorithm::~SignAlgorithm()
+HashAlgorithm::~HashAlgorithm()
 {
 
 }

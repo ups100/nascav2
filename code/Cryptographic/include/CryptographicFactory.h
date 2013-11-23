@@ -19,7 +19,7 @@ namespace Cryptographic {
 
 class SymetricAlgorithm;
 class AsymetricAlgorithm;
-class SignAlgorithm;
+class HashAlgorithm;
 
 /**
  * @brief Factory class for cryptographic modules
@@ -69,14 +69,14 @@ public:
      * @brief Gets the list of accessible Asymmetric algorithms
      * @return List of accessible Asymmetric algorithms
      */
-    static QList<QString> getSignAlgorithmList();
+    static QList<QString> getHashAlgorithmList();
 
     /**
-     * @brief Gets the sign algorithm registered with passed id
+     * @brief Gets the Hash algorithm registered with passed id
      * @param[in] id of the object
      * @return Object instance or NULL if no such object registered.
      */
-    static SignAlgorithm* getSignAlgorithm(const QString& id);
+    static HashAlgorithm* getHashAlgorithm(const QString& id);
 
     /**
      * @brief Registers a passed function as creator function for object with this id
@@ -105,7 +105,7 @@ public:
      * @note If object with such id already exist, the creator function
      *  is being overwritten and log is created
      */
-    static void registerFunc(boost::function<SignAlgorithm* ()> function,
+    static void registerFunc(boost::function<HashAlgorithm* ()> function,
             const QString& id);
 private:
     /**
@@ -134,9 +134,9 @@ private:
     QMutex m_mutexSym;
 
     /**
-     * @brief Mutex for Sign Algorithms collection
+     * @brief Mutex for Hash Algorithms collection
      */
-    QMutex m_mutexSign;
+    QMutex m_mutexHash;
 
     /**
      * @brief Instance of this class.
@@ -154,9 +154,9 @@ private:
     QHash<QString, boost::function<SymetricAlgorithm* ()> > m_sym;
 
     /**
-     * @brief Registered Sign Algorithms
+     * @brief Registered Hash Algorithms
      */
-    QHash<QString, boost::function<SignAlgorithm* ()> > m_sign;
+    QHash<QString, boost::function<HashAlgorithm* ()> > m_hash;
 };
 
 } //namespace Cryptographic

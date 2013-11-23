@@ -23,12 +23,12 @@ SHA256Algorithm::~SHA256Algorithm()
 
 }
 
-SignAlgorithm* SHA256Algorithm::clone()
+HashAlgorithm* SHA256Algorithm::clone()
 {
     return new SHA256Algorithm();
 }
 
-QByteArray SHA256Algorithm::generateSign(const QByteArray& message)
+QByteArray SHA256Algorithm::generateHash(const QByteArray& message)
 {
     std::string hash;
     try {
@@ -38,16 +38,16 @@ QByteArray SHA256Algorithm::generateSign(const QByteArray& message)
                 new HashFilter(m_hash, new StringSink(hash)));
 
     } catch (const CryptoPP::Exception& e) {
-        throw SignAlgorithmException(e.what());
+        throw HashAlgorithmException(e.what());
     }
 
     return QByteArray(hash.c_str(), hash.length());
 }
 
-bool SHA256Algorithm::verifySign(const QByteArray& message,
-        const QByteArray& sign)
+bool SHA256Algorithm::verifyHash(const QByteArray& message,
+        const QByteArray& hash)
 {
-    return generateSign(message) == sign;
+    return generateHash(message) == hash;
 }
 
 } //namespace Cryptographic
