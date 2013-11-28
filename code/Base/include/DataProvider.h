@@ -65,7 +65,7 @@ public:
      */
     const QString& getProviderId() const;
 
-private:
+protected:
     /**
      * @brief Function used to initialize subclass
      * @param[in] additionalData from configuration file
@@ -79,6 +79,7 @@ private:
     virtual int initImpl(const QString& additionalData, const QString& providerId,
             const QString& providerType);
 
+private:
     /**
      * @brief Provider type string
      */

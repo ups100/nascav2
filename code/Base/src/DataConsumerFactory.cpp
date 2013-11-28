@@ -43,6 +43,13 @@ DataConsumer* DataConsumerFactory::getDataConsumer(const QString& id)
             instance->m_dataConsumers[id]() : 0L;
 }
 
+QList<QString> DataConsumerFactory::getDataConsumerList()
+{
+    DataConsumerFactory *instance = DataConsumerFactory::getInstance();
+    QMutexLocker locker(&instance->m_consumersMutex);
+    return instance->m_dataConsumers.keys();
+}
+
 void DataConsumerFactory::registerFunc(
         boost::function<DataConsumer* ()> function, const QString& id)
 {

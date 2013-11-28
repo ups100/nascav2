@@ -35,11 +35,17 @@ public:
     static DataProviderFactory* getInstance();
 
     /**
-     * @brief Gets the DataConsumer registered with passed id
+     * @brief Gets the DataProvider registered with passed id
      * @param[in] id of the object
      * @return Object instance or NULL if no such object registered.
      */
     static DataProvider* getDataProvider(const QString& id);
+
+    /**
+     * @brief Gets the list of accessible Data Provider types
+     * @return List of accessible Data Provider types
+     */
+    static QList<QString> getDataProviderList();
 
     /**
      * @brief Registers a passed function as creator function for object with this id

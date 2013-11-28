@@ -49,14 +49,6 @@ public:
     virtual void close() =0;
 
     /**
-     * @brief Consumes data portion
-     * @details Takes an data portion and consumes it.
-     * @param[in] client which sent this data portion
-     * @param[in] data received from client
-     */
-    virtual void consumeData(Client* client, DataPortion data) =0;
-
-    /**
      * @brief Initialize the data provider
      * @param[in] additionalData from configuration file
      * @param[in] consumerId consumer name from configuration file

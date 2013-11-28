@@ -43,6 +43,13 @@ DataProvider* DataProviderFactory::getDataProvider(const QString& id)
             instance->m_dataProviders[id]() : 0L;
 }
 
+QList<QString> DataProviderFactory::getDataProviderList()
+{
+    DataProviderFactory *instance = DataProviderFactory::getInstance();
+    QMutexLocker locker(&instance->m_providersMutex);
+    return instance->m_dataProviders.keys();
+}
+
 void DataProviderFactory::registerFunc(
         boost::function<DataProvider* ()> function, const QString& id)
 {

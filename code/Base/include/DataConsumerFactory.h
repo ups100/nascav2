@@ -42,6 +42,12 @@ public:
     static DataConsumer* getDataConsumer(const QString& id);
 
     /**
+     * @brief Gets the list of accessible Data Consumer types
+     * @return List of accessible Data Consumer types
+     */
+    static QList<QString> getDataConsumerList();
+
+    /**
      * @brief Registers a passed function as creator function for object with this id
      * @param[in] function to be registered
      * @param[in] id of object to be registered
