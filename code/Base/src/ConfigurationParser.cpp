@@ -8,6 +8,8 @@
 #include "ConfigurationParser.h"
 #include "LogEntry.h"
 #include "AAAFactory.h"
+#include "DataProviderFactory.h"
+#include "DataConsumerFactory.h"
 #include <QHash>
 #include <QtGlobal>
 
@@ -315,7 +317,7 @@ ConfigurationParser::Token ConfigurationParser::getTokenType(
 bool ConfigurationParser::parseXMLConf(QXmlStreamReader &stream)
 {
     try {
-        while (!stream.atEnd()&&!stream.hasError()) {
+        while (!stream.atEnd() && !stream.hasError()) {
             QXmlStreamReader::TokenType token = stream.readNext();
             switch (token) {
                 case QXmlStreamReader::StartDocument:
@@ -889,6 +891,52 @@ void ConfigurationParser::submitRoute(const QString& from, const QString& via,
 
 bool ConfigurationParser::checkProgramConfiguration()
 {
+    //Checks if all data providers has accessible types
+    QSet<QString> providerTypes;
+    QList<QString> providerGroups = m_providerGroups.keys();
+    foreach(QString group, providerGroups) {
+        QList<QString> providers = m_providerGroups.keys();
+        foreach(QString provider, providers) {
+            providerTypes.insert(m_providerGroups[group][provider]->m_type);
+        }
+
+    }
+
+    QSet<QString> availableProviders = QSet<QString>::fromList(
+            DataProviderFactory::getDataProviderList());
+    providerTypes.subtract(availableProviders);
+
+    //The set should be empty
+    if (!providerTypes.empty()) {
+        foreach(QString type, providerTypes.toList()) {
+            LOG_ENTRY(MyLogger::WARN, "No such Data Provider type: "<<type);
+        }
+        return false;
+    }
+
+    //Checks if all data consumers has accessible types
+    QSet<QString> consumerTypes;
+    QList<QString> consumerGroups = m_consumerGroups.keys();
+    foreach(QString group, consumerGroups) {
+        QList<QString> consumers = m_consumerGroups.keys();
+        foreach(QString consumer, consumers) {
+            consumerTypes.insert(m_consumerGroups[group][consumer]->m_type);
+        }
+
+    }
+
+    QSet<QString> availableConsumers = QSet<QString>::fromList(
+            DataConsumerFactory::getDataConsumerList());
+    consumerTypes.subtract(availableConsumers);
+
+    //The set should be empty
+    if (!consumerTypes.empty()) {
+        foreach(QString type, consumerTypes.toList()) {
+            LOG_ENTRY(MyLogger::WARN, "No such Data Consumer type: "<<type);
+        }
+        return false;
+    }
+
     //Checks if all roads has valid start and end. And if all AAAModules names are valid
     QList<QString> aaaModules = AAA::AAAFactory::getAAAModulesList();
     QList<QString> groups = m_clientGroups.keys();
