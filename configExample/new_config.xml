@@ -1,0 +1,35 @@
+<nsca_config>
+	<data_providers id="jakis name">
+		<data_provider id="jakis name" type="DefaultTcpProvider">
+			<additional_data>
+				<elementy>
+					<elem>abc </elem>
+				</elementy>	
+			</additional_data>
+		</data_provider>
+		<data_provider id="jakis name2" type="DefaultTcpProvider">
+			<additional_data>
+				//cokolwiek tutaj
+			</additional_data>
+		</data_provider>
+	</data_providers>
+	<data_consumers id="jakis name">
+		<data_consumer id="jakis name" type="ToScreenPrinter">
+			<additional_data>
+				//cokolwiek tutaj
+			</additional_data>
+		</data_consumer>
+	</data_consumers>
+	<clients id="jakis name2">
+		<client id="jakies id">
+			<aaa_data>
+				<aaa_module type="AlwaysAllow">
+					//cokolwiek tutaj
+				</aaa_module>
+			</aaa_data>
+		</client>
+	</clients>
+	<routes>
+		<route client="jakis name2::jakies id" via="jakis name::jakis name" to="jakis name::jakis name"/>
+	</routes>
+</nsca_config>
