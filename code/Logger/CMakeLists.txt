@@ -8,7 +8,7 @@ INCLUDE_DIRECTORIES( 				${Boost_INCLUDE_DIRS}
 #if some class inherits QObject (has Q_OBJECT macro) add it's header file here
 SET( MYLOGGER_SRC
 		${INZ_SOURCE_DIR}/Logger/src/Logger.cpp
-		${INZ_SOURCE_DIR}/Logger/src/main.cpp
+		#${INZ_SOURCE_DIR}/Logger/src/main.cpp
 )
 
 
