@@ -13,6 +13,7 @@ SET( AAA_SRC
 		${INZ_SOURCE_DIR}/AAA/src/AAAFactory.cpp
 		${INZ_SOURCE_DIR}/AAA/src/AAAModule.cpp
 		${INZ_SOURCE_DIR}/AAA/src/ConversationInterface.cpp
+		${INZ_SOURCE_DIR}/AAA/src/AlwaysAllow.cpp
 )
 
 add_library( aaamodule STATIC ${AAA_SRC} )
