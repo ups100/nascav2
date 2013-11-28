@@ -17,6 +17,15 @@ SET( TCPSTANDARDMODULE_SRC
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/MessageHasher.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/MessageSigner.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/MessageSink.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/TcpServer.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/AdditionalThread.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageEndpointTcp.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageCipher.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageDecorator.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageFormer.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageHasher.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageSink.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageSigner.h
 )
 
 

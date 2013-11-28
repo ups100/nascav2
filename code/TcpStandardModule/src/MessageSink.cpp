@@ -6,7 +6,6 @@
  */
 
 #include "MessageSink.h"
-#include "MessageSink.h"
 
 namespace INZ_project {
 namespace TcpStandardModule {
