@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES( 	${Boost_INCLUDE_DIRS}
 						${INZ_SOURCE_DIR}/FactoryRegistration/include
 						${INZ_SOURCE_DIR}/Logger/include
 						${INZ_SOURCE_DIR}/Base/include
+						${INZ_SOURCE_DIR}/TcpStandardModule/include
 )
 
 #if some class inherits QObject (has Q_OBJECT macro) add it's header file here
@@ -25,15 +26,20 @@ SET( BASE_SRC
 		${INZ_SOURCE_DIR}/Base/include/DataConsumer.h
 		${INZ_SOURCE_DIR}/Base/include/DataFile.h
 		${INZ_SOURCE_DIR}/Base/include/MyNscaMain.h
+		${INZ_SOURCE_DIR}/Base/src/DefaultTcpProvider.cpp
+		${INZ_SOURCE_DIR}/Base/src/ToScreenPrinter.cpp
 )
 
 add_executable( base ${BASE_SRC} )
 
-#here add some additional qt modules
 TARGET_LINK_LIBRARIES(	base 
+		${Boost_LIBRARIES}
+		-Wl,-whole-archive
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/liblogger.a
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libaaamodule.a
-		${Boost_LIBRARIES}
+		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libtcpstandardmodule.a
+		-Wl,-no-whole-archive
+		
 )
 
-qt5_use_modules(base Core)
+qt5_use_modules(base Core Network)
