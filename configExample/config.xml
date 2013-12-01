@@ -1,34 +1,34 @@
 <nsca_config>
-	<data_providers id="jakis name">
-		<data_provider id="jakis name" type="type">
+	<data_providers id="Providers">
+		<data_provider id="Provider1" type="DefaultTcpProvider">
 			<additional_data>
-				//cokolwiek tutaj
+				<IP>IP: 0.0.0.0</IP>
+				<port>Port: 8888</port>
 			</additional_data>
 		</data_provider>
-		<data_provider id="jakis name" type="type">
+		<data_provider id="Provider2" type="DefaultTcpProvider">
 			<additional_data>
 				//cokolwiek tutaj
 			</additional_data>
 		</data_provider>
 	</data_providers>
-	<data_consumers id="jakis name">
-		<data_consumer id="jakis name" type="type">
+	<data_consumers id="Consumers">
+		<data_consumer id="Consumer1" type="ToScreenPrinter">
 			<additional_data>
 				//cokolwiek tutaj
 			</additional_data>
 		</data_consumer>
 	</data_consumers>
-	<clients id="jakis name">
-		<client id="jakies id">
+	<clients id="Clients">
+		<client id="Client1">
 			<aaa_data>
-				<aaa_module type="type">
+				<aaa_module type="AlwaysAllow">
 					//cokolwiek tutaj
 				</aaa_module>
-				<aaa_module type="type"/>
 			</aaa_data>
 		</client>
 	</clients>
 	<routes>
-		<route client="iGrupa::id lub *" via="jakis provider lub *" to="jakis consumer lub *"/>
+		<route client="Clients::Client1" via="Providers::Provider1" to="Consumers::Consumer1"/>
 	</routes>
 </nsca_config>
