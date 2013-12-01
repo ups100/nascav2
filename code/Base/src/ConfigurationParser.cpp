@@ -895,7 +895,7 @@ bool ConfigurationParser::checkProgramConfiguration()
     QSet<QString> providerTypes;
     QList<QString> providerGroups = m_providerGroups.keys();
     foreach(QString group, providerGroups) {
-        QList<QString> providers = m_providerGroups.keys();
+        QList<QString> providers = m_providerGroups[group].keys();
         foreach(QString provider, providers) {
             providerTypes.insert(m_providerGroups[group][provider]->m_type);
         }
@@ -918,7 +918,7 @@ bool ConfigurationParser::checkProgramConfiguration()
     QSet<QString> consumerTypes;
     QList<QString> consumerGroups = m_consumerGroups.keys();
     foreach(QString group, consumerGroups) {
-        QList<QString> consumers = m_consumerGroups.keys();
+        QList<QString> consumers = m_consumerGroups[group].keys();
         foreach(QString consumer, consumers) {
             consumerTypes.insert(m_consumerGroups[group][consumer]->m_type);
         }

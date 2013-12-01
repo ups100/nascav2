@@ -11,6 +11,7 @@
 #include "DataProviderFactory.h"
 #include "DataFile.h"
 #include <QFile>
+#include <QDir>
 #include <QTimer>
 
 namespace INZ_project {
@@ -95,7 +96,7 @@ int MyNscaMain::startOnlyConsumers()
 
 MyNscaMain::WhatToDo MyNscaMain::parseCommandLineArgs()
 {
-    return CHECK_CONFIGURATION_FILE;
+    return START_PROGRAM;
 }
 
 int MyNscaMain::startProgram()
@@ -331,6 +332,17 @@ int MyNscaMain::createDataProviders()
 
 int MyNscaMain::createDataFiles()
 {
+    //check if suitable directory exist, if not create it
+    QDir rootPath(m_bufPath);
+    if (!rootPath.exists()) {
+        LOG_ENTRY(MyLogger::INFO,
+                "Directory: "<<m_bufPath<<" doesn't exist. Creating...");
+        if (!rootPath.mkpath(".")) {
+            LOG_ENTRY(MyLogger::FATAL,
+                    "Unable to create a directory: "<<m_bufPath);
+            return -1;
+        }
+    }
     QSet<QString> providers = ConfigurationParser::getDataProvidersNames();
     foreach(QString provider, providers) {
         m_dataFiles[provider] = boost::shared_ptr<DataFile>(new DataFile());
