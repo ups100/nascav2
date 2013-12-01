@@ -114,7 +114,7 @@ inline void Logger::appendLog(LogLevel logLevel, int line, const char *file,
     file = trimFilePath(file);
     switch(logLevel) {
         case INFO:
-            message<<"[ INFO ] ";
+            message<<"[ INFO ]";
             break;
         case DEBUG:
             message<<"[ DEBUG ]";
