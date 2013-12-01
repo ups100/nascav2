@@ -731,7 +731,10 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 PREDEFINED             = "SYMETRIC_ALGORITHM(className, name)=class className: public SymetricAlgorithm" \
 						"ASYMETRIC_ALGORITHM(className, name)=class className: public AsymetricAlgorithm" \
-						"HASH_ALGORITHM(className, name)=class className: public HashAlgorithm" 
+						"HASH_ALGORITHM(className, name)=class className: public HashAlgorithm" \
+						"AAAMODULE(className, name)=class className: public AAAModule" \
+						"DATA_PROVIDER(className, name)=class className: public DataProvider" \
+						"DATA_CONSUMER(className, name)=class className: public DataConsumer"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
