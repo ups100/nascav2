@@ -104,7 +104,7 @@ public:
      * @brief Sets initial vector
      * @param[in] iv to be set
      * @note Implement this function in each subclass. If encryption method
-     * do not use Iv you should throw an instance of SymmetricAlgorithmException
+     * do not use Iv you should left this implementation empty
      */
     virtual void setIv(const QByteArray& iv) = 0;
 
