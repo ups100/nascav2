@@ -2,6 +2,7 @@ MESSAGE( "Building TcpStandardModule target." )
 
 #directories with headers for this target
 INCLUDE_DIRECTORIES( 				${Boost_INCLUDE_DIRS}
+						${INZ_SOURCE_DIR}/AAA/include
 						${INZ_SOURCE_DIR}/Cryptographic/include
 						${INZ_SOURCE_DIR}/Logger/include
 						${INZ_SOURCE_DIR}/TcpStandardModule/include
@@ -19,6 +20,11 @@ SET( TCPSTANDARDMODULE_SRC
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/MessageSink.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/TcpServer.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/AdditionalThread.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/ConnectionManager.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/MessageCodes.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/Session.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/SessionInitializer.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/SessionPart.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageEndpointTcp.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageCipher.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageDecorator.h
@@ -26,6 +32,10 @@ SET( TCPSTANDARDMODULE_SRC
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageHasher.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageSink.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageSigner.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/ConnectionManager.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/Session.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/SessionInitializer.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/SessionPart.h
 )
 
 
