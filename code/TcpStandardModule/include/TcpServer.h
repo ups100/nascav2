@@ -11,8 +11,7 @@ namespace INZ_project {
 namespace TcpStandardModule {
 
 /**
- * @brief Represents a part of session.
- * @details You should use this class to add a new element to session with client.
+ * @brief Server class to listen for incoming connections.
  */
 class TcpServer : public QTcpServer
 {

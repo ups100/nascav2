@@ -32,10 +32,11 @@ void MessageEndpointTcp::close()
 {
     if(m_socket->state() == QAbstractSocket::ConnectedState) {
         m_socket->disconnect();
-    } else {
-        m_socket->close();
-        emit sinkClosed();
     }
+
+    m_socket->close();
+    emit sinkClosed();
+
 }
 
 void MessageEndpointTcp::disconnected()

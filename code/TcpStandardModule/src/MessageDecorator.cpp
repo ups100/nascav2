@@ -16,8 +16,8 @@ MessageDecorator::MessageDecorator(boost::shared_ptr<MessageSink> messageSink)
 {
     connect(m_child.get(), SIGNAL(readyRead()), this, SLOT(readDataFromChild()));
     connect(m_child.get(), SIGNAL(sinkClosed()), this, SLOT(childClosed()));
-    connect(m_child.get(), SIGNAL(error(QAbstractSocket::SocketError)), this,
-            SLOT(translateError(QAbstractSocket::SocketError)));
+    connect(m_child.get(), SIGNAL(error(MessageSink::SinkError)), this,
+            SIGNAL(error(MessageSink::SinkError)));
 }
 
 MessageDecorator::~MessageDecorator()

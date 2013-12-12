@@ -66,7 +66,7 @@ signals:
     /**
      * @brief Signal emitted if an error occurred.
      */
-    void error(SinkError error);
+    void error(MessageSink::SinkError error);
     /**
      * @brief Signal emitted once every time new data is available.
      */
