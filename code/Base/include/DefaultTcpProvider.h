@@ -16,7 +16,8 @@ namespace Base {
 /**
  * @brief Base data provider which use TCP.
  * @details This class starts the new thread.
- */DATA_PROVIDER(DefaultTcpProvider, DefaultTcpProvider)
+ */
+DATA_PROVIDER(DefaultTcpProvider, DefaultTcpProvider)
 {
 public:
     /**
@@ -38,8 +39,8 @@ protected:
 private:
 
     /**
-     * @brief Parses the #options and search for values like ip or port
-     * @details The format should be IP: <IP_ADDR> \n and Port: <port> \n
+     * @brief Parses the options and search for values like ip or port
+     * @details The format should be IP: IP_ADDR \n and Port: PORT \n
      * @param[in] options string from which options should be parsed
      */
     int parseOptions(const QString& options);

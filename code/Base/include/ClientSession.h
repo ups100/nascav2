@@ -12,6 +12,7 @@
 #include "AAAModule.h"
 #include "AAAFactory.h"
 #include "ConversationInterface.h"
+#include "SymetricAlgorithm.h"
 #include <boost/shared_ptr.hpp>
 
 namespace INZ_project {
@@ -80,6 +81,16 @@ public:
      * @throws ClientException if client has not been authorized
      */
     DataChannel* getDataChannel();
+
+    /**
+     * @brief Gets the symmetric algorithm with given name if such algorithm
+     * is allowed for this client
+     * @param[in] name of algorithm
+     * @return NULL if no such algorithm or algorithm not allowed for this client
+     * or new instance of algorithm which should be used for encryption
+     * @note The caller takes the ownership of returned object
+     */
+    Cryptographic::SymetricAlgorithm* getSymetricAlgorithm(const QString& name);
 
     /**
      * @brief Exception class for client class

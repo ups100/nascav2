@@ -8,9 +8,14 @@
 #include "DefaultTcpProvider.h"
 #include "LogEntry.h"
 #include "TcpServer.h"
+#include "SessionPart.h"
+#include "ConnectionManager.h"
+#include "SessionInitializer.h"
 #include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
 
 using namespace INZ_project::TcpStandardModule;
+using boost::shared_ptr;
 
 namespace INZ_project {
 namespace Base {
@@ -45,6 +50,7 @@ int DefaultTcpProvider::initImpl(const QString& additionalData,
 
 int DefaultTcpProvider::run()
 {
+    //prepare server
     TcpServer server;
     if (!server.listen(m_address, m_port)) {
         LOG_ENTRY(MyLogger::FATAL,
@@ -57,6 +63,16 @@ int DefaultTcpProvider::run()
         LOG_ENTRY(MyLogger::INFO,
                 "Listening at "<<m_address.toString()<<":"<<server.serverPort())
     }
+
+    //prepare session schema
+    QMap<QString, QList<shared_ptr<SessionPart> > > versions;
+    QList<shared_ptr<SessionPart> > parts;
+    parts.append(boost::shared_ptr<SessionPart>(new SessionInitializer(versions)));
+
+    //prepare connection manager
+    ConnectionManager manager(&server, parts);
+
+    //let's roll the ball
     return m_thread.exec();
 }
 
