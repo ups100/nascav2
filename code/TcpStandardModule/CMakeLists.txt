@@ -25,6 +25,10 @@ SET( TCPSTANDARDMODULE_SRC
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/Session.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/SessionInitializer.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/src/SessionPart.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/CryptographyInitializer.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/ClientAuthorizer.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/LogsTransmitter.cpp
+		${INZ_SOURCE_DIR}/TcpStandardModule/src/AuthConversation.cpp
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageEndpointTcp.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageCipher.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageDecorator.h
@@ -34,8 +38,12 @@ SET( TCPSTANDARDMODULE_SRC
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/MessageSigner.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/ConnectionManager.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/Session.h
-		${INZ_SOURCE_DIR}/TcpStandardModule/include/SessionInitializer.h
 		${INZ_SOURCE_DIR}/TcpStandardModule/include/SessionPart.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/SessionInitializer.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/CryptographyInitializer.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/ClientAuthorizer.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/LogsTransmitter.h
+		${INZ_SOURCE_DIR}/TcpStandardModule/include/AuthConversation.h
 )
 
 
