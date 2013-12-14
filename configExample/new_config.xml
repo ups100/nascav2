@@ -2,9 +2,9 @@
 	<data_providers id="Providers">
 		<data_provider id="Provider1" type="DefaultTcpProvider">
 			<additional_data>
-				<elementy>
-					<elem>abc </elem>
-				</elementy>	
+				<IP>IP: 0.0.0.0</IP>
+				<port>Port: 8888</port>
+				<key>PrivateKey:./keys/Providers::Provider1.priv</key>
 			</additional_data>
 		</data_provider>
 		<data_provider id="Provider2" type="DefaultTcpProvider">
