@@ -37,5 +37,10 @@ void AsymetricAlgorithm::setPublicKey(const QByteArray& partnerKey)
     m_publicKey = partnerKey;
 }
 
+void AsymetricAlgorithm::setPrivateKey(const QByteArray& partnerKey)
+{
+    m_privateKey = partnerKey;
+}
+
 } //namespace Cryptographic
 } //namespace INZ_project

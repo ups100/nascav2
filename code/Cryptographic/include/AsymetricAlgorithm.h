@@ -44,7 +44,8 @@ public:
      * @param[in] usePublic use public key instead of private
      * @return decrypted message
      */
-    virtual QByteArray decrypt(const QByteArray& encrypted, bool usePublic=false) = 0;
+    virtual QByteArray decrypt(const QByteArray& encrypted, bool usePublic =
+            false) = 0;
 
     /**
      * @brief Encrypts a message using set public key
@@ -52,7 +53,8 @@ public:
      * @param[in] usePrivate key instead of public
      * @return encrypted message
      */
-    virtual QByteArray encrypt(const QByteArray& plain, bool usePrivate=false) = 0;
+    virtual QByteArray encrypt(const QByteArray& plain,
+            bool usePrivate = false) = 0;
 
     /**
      * @brief Generates a pair of public and private key
@@ -84,6 +86,14 @@ public:
      * if subclass need to take an action when key has changed override this method
      */
     virtual void setPublicKey(const QByteArray& partnerKey);
+
+    /**
+     * @brief Sets private key
+     * @param[in] partnerKey key to be set
+     * @note Default implementation sets only m_publicKey to new value
+     * if subclass need to take an action when key has changed override this method
+     */
+    virtual void setPrivateKey(const QByteArray& partnerKey);
 
     /**
      * @brief Exception class for errors

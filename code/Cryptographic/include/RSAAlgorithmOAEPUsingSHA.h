@@ -48,6 +48,8 @@ public:
 
     virtual void setPublicKey(const QByteArray& partnerKey);
 
+    virtual void setPrivateKey(const QByteArray& partnerKey);
+
 protected:
 
     /**

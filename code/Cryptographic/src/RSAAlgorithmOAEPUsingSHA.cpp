@@ -198,5 +198,27 @@ void RSAAlgorithmOAEPUsingSHA::setPublicKey(const QByteArray& partnerKey)
     return;
 }
 
+void RSAAlgorithmOAEPUsingSHA::setPrivateKey(const QByteArray& partnerKey)
+{
+    if (partnerKey == QByteArray()) {
+        throw AsymmetricAlgorithmException("Key cannot be empty");
+    }
+
+    m_privateKey = partnerKey;
+
+    try {
+        StringSource priv(reinterpret_cast<const byte*>(m_privateKey.data()),
+                static_cast<unsigned>(m_privateKey.length()), true);
+
+        m_rawPrivateKey.Load(priv);
+
+    } catch (const CryptoPP::Exception& e) {
+        m_privateKey.clear();
+        throw AsymmetricAlgorithmException(e.what());
+    }
+
+    return;
+}
+
 } //namespace Cryptographic
 } //namespace INZ_project
