@@ -7,10 +7,16 @@
 
 #include <QThread>
 #include <QHostAddress>
+#include <QFile>
+#include <boost/shared_ptr.hpp>
 #include "AdditionalThread.h"
 #include "DataProviderRegister.h"
 
 namespace INZ_project {
+namespace Cryptographic {
+class AsymetricAlgorithm;
+}
+
 namespace Base {
 
 /**
@@ -45,6 +51,8 @@ private:
      */
     int parseOptions(const QString& options);
 
+    int generateKeysToFiles(QFile *privateKey, QFile *publicKey);
+
     /**
      * @brief Main function of the additional thread
      */
@@ -64,6 +72,8 @@ private:
      * @brief Address which should be used to listen for incoming connections
      */
     qint16 m_port;
+
+    boost::shared_ptr<Cryptographic::AsymetricAlgorithm> m_algorithm;
 };
 
 } //namespace Base
