@@ -19,6 +19,10 @@ DataChannel::DataChannel(DataFile *file, const QSet<QString>& destinations,
         const QString& client, const QString& provider)
         : m_file(file), m_client(client), m_provider(provider)
 {
+    if (destinations.empty()) {
+        throw BadIdException("No destination.");
+    }
+
     foreach(QString dst, destinations) {
         DataConsumer *cons = MyNscaMain::getConsumer(dst);
         if (cons == 0L) {
@@ -59,21 +63,48 @@ bool DataChannel::write(const DataPortion& portion)
     bool ret = true;
     if (portion.getClient() != m_client) {
         LOG_ENTRY(MyLogger::DEBUG,
-                "Trying to write logs from: "<<portion.getClient()
-                <<"to channel which belongs to "<<m_client);
+                "Trying to write logs from: "<<portion.getClient() <<"to channel which belongs to "<<m_client);
         ret = false;
     }
 
     if (portion.getProvider() != m_provider) {
         LOG_ENTRY(MyLogger::DEBUG,
-                "Trying to write logs received via: "<<portion.getProvider()
-                <<"to channel which starts in "<<m_provider);
+                "Trying to write logs received via: "<<portion.getProvider() <<"to channel which starts in "<<m_provider);
         ret = false;
     }
 
-    if (ret) {
+    if (ret && (ret = m_pendingWrites.empty())) {
         ret = m_file->write(m_client, m_provider, m_consumers, m_header,
                 portion.getIcingaFormated());
+    }
+
+    return ret;
+}
+
+int DataChannel::scheduleForWrite(const DataPortion& portion)
+{
+    int ret = 0;
+    if (portion.getClient() != m_client) {
+        LOG_ENTRY(MyLogger::DEBUG,
+                "Trying to write logs from: "<<portion.getClient() <<"to channel which belongs to "<<m_client);
+        ret = -1;
+    }
+
+    if (portion.getProvider() != m_provider) {
+        LOG_ENTRY(MyLogger::DEBUG,
+                "Trying to write logs received via: "<<portion.getProvider() <<"to channel which starts in "<<m_provider);
+        ret = -1;
+    }
+
+    if (ret == 0) {
+        qint64 id = m_file->scheduleForWrite(m_client, m_provider, m_consumers, m_header,
+                portion.getIcingaFormated());
+
+        if( id > 0) {
+            m_pendingWrites.enqueue(id);
+        }
+
+        ret = id;
     }
 
     return ret;

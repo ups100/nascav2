@@ -12,6 +12,8 @@
 #include <QSet>
 #include <QMap>
 #include <stdexcept>
+#include <QObject>
+#include <QQueue>
 
 namespace INZ_project {
 namespace Base {
@@ -23,9 +25,9 @@ class DataConsumer;
 /**
  * @brief Channel for passing logs to all required data consumers
  */
-class DataChannel
+class DataChannel: public QObject
 {
-
+Q_OBJECT
 public:
     /**
      * @brief Constructor
@@ -98,6 +100,25 @@ public:
         }
     };
 
+    /**
+     * @brief Schedules portion to be written into channel when it will be possible
+     * @param[in] portion to be written. This function does not take the ownership
+     * of this object.
+     * @return 0 if portion has been submitted, value below 0 if error occurred,
+     * if value if greater than 0 it's id of submit
+     */
+    int scheduleForWrite(const DataPortion& portion);
+
+signals:
+
+    /**
+     * @brief Signal emitted when portion has been submitted
+     * @param[in] id of submitted logs portion
+     */
+    void portionWritten(qint64 id);
+
+
+
 private:
     /**
      * @brief Buffer where logs are stored
@@ -121,6 +142,11 @@ private:
      * @brief Ready to store logs header
      */
     QByteArray m_header;
+
+    /**
+     * @brief Queue of pending write demands
+     */
+    QQueue< qint64 > m_pendingWrites;
 };
 
 } //namespace Base

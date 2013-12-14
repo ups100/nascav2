@@ -181,7 +181,7 @@ DataChannel* MyNscaMain::provideDataChannel(const QString& client,
                         ConfigurationParser::getRoutes(client, provider),
                         client, provider);
             } catch (const DataChannel::BadIdException &e) {
-                LOG_ENTRY(MyLogger::ERROR,
+                LOG_ENTRY(MyLogger::DEBUG,
                         "Cannot create data channel for: " <<client<<" connected to "<<provider);
                 //only to clarify
                 channel = 0L;

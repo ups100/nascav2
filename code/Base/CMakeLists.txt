@@ -1,5 +1,8 @@
 MESSAGE( "Building Base target." )
 
+find_package(PkgConfig)
+pkg_check_modules(cryptopp REQUIRED libcrypto++)
+
 #directories with headers for this target
 INCLUDE_DIRECTORIES( 	${Boost_INCLUDE_DIRS}
 						${INZ_SOURCE_DIR}/AAA/include
@@ -29,6 +32,8 @@ SET( BASE_SRC
 		${INZ_SOURCE_DIR}/Base/include/MyNscaMain.h
 		${INZ_SOURCE_DIR}/Base/src/DefaultTcpProvider.cpp
 		${INZ_SOURCE_DIR}/Base/src/ToScreenPrinter.cpp
+		${INZ_SOURCE_DIR}/Base/include/ClientSession.h
+		${INZ_SOURCE_DIR}/Base/include/DataChannel.h
 )
 
 add_executable( base ${BASE_SRC} )
@@ -39,8 +44,10 @@ TARGET_LINK_LIBRARIES(	base
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/liblogger.a
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libaaamodule.a
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libtcpstandardmodule.a
+		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libcryptographic.a
 		-Wl,-no-whole-archive
-		
+		${cryptopp_LDFLAGS}
+		${cryptopp_LIBRARIES}
 )
 
 qt5_use_modules(base Core Network)

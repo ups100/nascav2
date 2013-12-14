@@ -12,6 +12,7 @@
 #include "LogEntry.h"
 #include <QObject>
 #include <QDataStream>
+#include <limits>
 
 namespace INZ_project {
 namespace Base {
@@ -227,8 +228,9 @@ bool DataFile::write(const QString& client, const QString& provider,
     }
 
     qint64 size = header.size() + logsArray.size();
-    const QByteArray *tab[2];
+
     QMutexLocker locker(&m_mutex);
+
     if (!m_file.isOpen()) {
         LOG_ENTRY(MyLogger::ERROR,
                 "Trying to write to "<<provider<<" buffer which has not been set.");
@@ -241,13 +243,78 @@ bool DataFile::write(const QString& client, const QString& provider,
         return false;
     }
 
+    return m_requestQueue.empty() ?
+            writeImpl(client, provider, consumers, header, logs, logsArray) :
+            false;
+
+}
+
+qint64 DataFile::scheduleForWrite(const QString& client,
+        const QString& provider, const QMap<QString, DataConsumer*> consumers,
+        const QByteArray& header, const QList<QString>& logs)
+{
+    QByteArray logsArray;
+    logsArray.append(QString().setNum(logs.size()) + "\n");
+    foreach(QString log, logs) {
+        logsArray.append(log);
+    }
+
+    qint64 size = header.size() + logsArray.size();
+
+    QMutexLocker locker(&m_mutex);
+
+    if (!m_file.isOpen()) {
+        LOG_ENTRY(MyLogger::ERROR,
+                "Trying to write to "<<provider<<" buffer which has not been set.");
+        return -1;
+    }
+
+    if (m_maxSize < size) {
+        LOG_ENTRY(MyLogger::ERROR,
+                "To big logs portion for such a little file "<<provider);
+        return -1;
+    }
+
+    bool written = false;
+    if (m_requestQueue.empty()) {
+        //no pending requests, try to write this one
+        written = writeImpl(client, provider, consumers, header, logs,
+                logsArray);
+    }
+
+    //There is some pending request so let's enqueue this one
+    if (!written) {
+        boost::shared_ptr<Request> rq = boost::shared_ptr<Request>(new Request(client, provider, consumers,
+                header, logs, size));
+
+        rq->id =
+                !m_requestQueue.empty() ?
+                        (m_requestQueue.last()->id + 1)
+                                % std::numeric_limits<qint64>::max() :
+                        1;
+        m_requestQueue.enqueue(rq);
+        return rq->id;
+    }
+
+    return 0;
+}
+
+bool DataFile::writeImpl(const QString& client, const QString& provider,
+        const QMap<QString, DataConsumer*> consumers, const QByteArray& header,
+        const QList<QString>& logs, const QByteArray& logsArray)
+{
+    qint64 size = header.size() + logsArray.size();
+    const QByteArray *tab[2];
+    tab[0] = &header;
+    tab[1] = &logsArray;
+
     //there is enough space so we know that here we will start writing
     if (!m_file.seek(m_toWrite)) {
         LOG_ENTRY(MyLogger::ERROR, "Unable to seek in "<<provider<<" buffer.");
         return false;
     }
 
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < 2; ++i) {
         if (m_file.pos() > (m_toRead > 0) ? m_toRead : 0) {
             /*    |
              *    |< m_toRead
@@ -408,9 +475,8 @@ void DataFile::readAndDistribute()
         m_nmbDest = destCount;
 
         foreach(DataConsumer* consumer, destinations) {
-            QMetaObject::invokeMethod(consumer,
-                    "consumeDataPortion", Qt::QueuedConnection,
-                    Q_ARG(const ReadPortion*, m_portion));
+            QMetaObject::invokeMethod(consumer, "consumeDataPortion",
+                    Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion));
         }
     } catch (const QString& e) {
         delete logs;
@@ -429,6 +495,7 @@ void DataFile::confirmPortion(ReadPortion *portion)
     if (--m_nmbDest == 0) {
 
         delete m_portion;
+        m_portion = 0L;
 
         if (m_toWrite == m_currentLogEnd) {
             //there is nothing to read
@@ -470,13 +537,39 @@ void DataFile::confirmPortion(ReadPortion *portion)
 
             readAndDistribute();
         }
+
+        popNextFromQueue();
+    }
+}
+
+void DataFile::popNextFromQueue()
+{
+    if (!m_requestQueue.empty()
+            && getFreeSpaceSizeImpl() >= m_requestQueue.head()->size) {
+        boost::shared_ptr<Request> rq = m_requestQueue.dequeue();
+        QByteArray logsArray;
+
+        logsArray.append(QString().setNum(rq->logs.size()) + "\n");
+        foreach(QString log, rq->logs) {
+            logsArray.append(log);
+        }
+
+        bool result = writeImpl(rq->client, rq->provider, rq->consumers, rq->header, rq->logs,
+                logsArray);
+
+        if(result) {
+            LOG_ENTRY(MyLogger::INFO, "Request #"<<rq->id<<" written.");
+            emit requestWritten(rq->id);
+        } else {
+            LOG_ENTRY(MyLogger::ERROR, "Unable to write to buffer request #"<<rq->id);
+        }
     }
 }
 
 void DataFile::initialRead()
 {
     QMutexLocker locker(&m_mutex);
-    if(!m_file.isOpen()) {
+    if (!m_file.isOpen()) {
         LOG_ENTRY(MyLogger::ERROR, "Trying to initial read but file not set");
     }
     readAndDistribute();
@@ -490,6 +583,15 @@ qint64 DataFile::getFreeSpaceSizeImpl()
     return (m_toRead < m_toWrite) ?
             m_maxSize - m_firstLog - (m_toWrite - m_toRead) :
             m_toRead - m_toWrite;
+}
+
+DataFile::Request::Request(const QString& cli, const QString &prov,
+        const QMap<QString, DataConsumer*>& cons, const QByteArray& head,
+        const QList<QString>& l, qint64 s)
+        : client(cli), provider(prov), consumers(cons), header(head), logs(l),
+                size(s), id(-1)
+{
+
 }
 
 } //namespace Base

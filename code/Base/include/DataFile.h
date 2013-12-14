@@ -12,6 +12,9 @@
 #include <QFile>
 #include <QMutex>
 #include <QMap>
+#include <QList>
+#include <boost/shared_ptr.hpp>
+#include <QQueue>
 
 namespace INZ_project {
 namespace Base {
@@ -30,7 +33,6 @@ class MyNscaMain;
 class DataFile : public QObject
 {
 Q_OBJECT
-    ;
 public:
     friend class MyNscaMain;
 
@@ -75,11 +77,21 @@ public:
      * @param[in] consumers who should receive it
      * @param[in] header to be stored in file
      * @param[in] logs which should be stored
+     * @param[in] requestId id of scheduled waiting for free space
      * @return false if there was no file set or data portion is to big to place it
      * now in a file, true if portion was successfully written.
      * @note This function is thread safe.
      */
-    virtual bool write(const QString& client, const QString& provider,
+    bool write(const QString& client, const QString& provider,
+            const QMap<QString, DataConsumer*> consumers,
+            const QByteArray& header, const QList<QString>& logs);
+
+    /**
+     * @brief Schedules logs to be written
+     * @return value below 0 if error occurred in logs,
+     * 0 if logs has been written immediately, value above 0 as id of task
+     */
+    qint64 scheduleForWrite(const QString& client, const QString& provider,
             const QMap<QString, DataConsumer*> consumers,
             const QByteArray& header, const QList<QString>& logs);
 
@@ -112,7 +124,37 @@ signals:
      */
     void bufferEmpty();
 
+    /**
+     * @brief Signal emitted when request with given id has been written
+     * @param[in] id of written request
+     */
+    void requestWritten(qint64 id);
+
+protected:
+    /**
+     * @brief Stores a log and notify receivers if no log is currently processed
+     * @param[in] client who send this logs
+     * @param[in] provider who received this logs
+     * @param[in] consumers who should receive it
+     * @param[in] header to be stored in file
+     * @param[in] logs which should be stored
+     * @param[in] requestId id of scheduled waiting for free space
+     * @return false if there was no file set or data portion is to big to place it
+     * now in a file, true if portion was successfully written.
+     * @note This function is thread safe.
+     */
+    bool writeImpl(const QString& client, const QString& provider,
+            const QMap<QString, DataConsumer*> consumers,
+            const QByteArray& header, const QList<QString>& logs,
+            const QByteArray& logsArray);
+
 private:
+
+    /**
+     * @brief Tries to write next message from queue if any
+     */
+    void popNextFromQueue();
+
     /**
      * @brief Check the structure of single logEntry
      * @return true if structure is suitable, false otherwise
@@ -181,6 +223,25 @@ private:
      * @brief Number of data consumers which received notification about current readportion.
      */
     int m_nmbDest;
+
+    struct Request
+    {
+        Request(const QString& cli, const QString &prov,
+                const QMap<QString, DataConsumer*>& cons,
+                const QByteArray& head, const QList<QString>& l, qint64 s);
+        QString client;
+        QString provider;
+        QMap<QString, DataConsumer*> consumers;
+        QByteArray header;
+        QList<QString> logs;
+        qint64 size;
+        qint64 id;
+    };
+
+    /**
+     * @brief Queue of requests to be saved
+     */
+    QQueue<boost::shared_ptr<Request> > m_requestQueue;
 
 };
 

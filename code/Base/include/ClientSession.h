@@ -9,6 +9,8 @@
 #define EA_D6440D50_CCA5_46f1_8A41_6416AF2C70A2__INCLUDED_
 
 #include <QString>
+#include <QObject>
+
 #include "AAAModule.h"
 #include "AAAFactory.h"
 #include "ConversationInterface.h"
@@ -24,9 +26,9 @@ class DataProvider;
 /**
  * @brief Class which represents a single client connection.
  */
-class ClientSession
+class ClientSession : public QObject
 {
-
+Q_OBJECT
 public:
     /**
      * @brief Constructor
@@ -60,11 +62,9 @@ public:
      * @param[in] interface for conversation with client. This function does not
      * take the ownership of this object. You should delete it after return from this
      * function.
-     * @return true if client has been successfully authorized with this module,
-     * false otherwise
      * @throws ClientException if given module is unavailable for this client
      */
-    bool authorize(const QString& aaaModuleId,
+    void authorize(const QString& aaaModuleId,
             AAA::ConversationInterface* interface);
 
     /**
@@ -75,7 +75,7 @@ public:
 
     /**
      * @brief Gets the data channel for this client
-     * @return Data channel associated with this client
+     * @return Data channel associated with this client or 0L if no destinations for this client
      * @note This object has an ownership of returned object so you should
      * not delete it.
      * @throws ClientException if client has not been authorized
@@ -107,6 +107,22 @@ public:
         {
         }
     };
+
+signals:
+    /**
+     * @brief Signal emitted when authorization process has been finished.
+     * @param[in] result of the authorization
+     */
+    void authorizationFinished(bool result);
+
+private slots:
+
+    /**
+     * @brief Slot executed when authorization module has finished its work
+     * @param[in] result of the authorization
+     */
+    void authorizationFinshedSlot(bool result);
+
 private:
     /**
      * @brief Id of client
@@ -128,6 +144,8 @@ private:
      * @brief Data channel to save received data.
      */
     boost::shared_ptr<DataChannel> m_dataChannel;
+
+    AAA::AAAModule *m_module;
 };
 
 } //namespace Base
