@@ -20,7 +20,8 @@ public:
     virtual ~AlwaysAllow();
     virtual AAAModule* clone();
     virtual void setAdditionalData(const QString &additionalData);
-    virtual bool run();
+    virtual void run();
+    virtual void newDataArrived();
 };
 
 } //namespace AAA

@@ -9,6 +9,7 @@
 #define EA_FF532278_8F94_479e_AC6E_C6195432C273__INCLUDED_
 
 #include <QByteArray>
+#include <QObject>
 
 namespace INZ_project {
 namespace AAA {
@@ -16,9 +17,9 @@ namespace AAA {
 /**
  * @brief Base class for conversation between AAAModule and client
  */
-class ConversationInterface
+class ConversationInterface : public QObject
 {
-
+Q_OBJECT
 public:
     /**
      * @brief Constructor
@@ -38,14 +39,17 @@ public:
     virtual int sendMessage(const QByteArray& message) = 0;
 
     /**
-     * @brief Receives the message from client
-     * @param[in] timeout number of mili seconds to wait for message.
-     * if -1 passed waits forever.
-     * @param[out] ok value to be set. True if message has been received,
-     * false if an error occurred or timeout reached
+     * @brief Gets the message from client
+     * @return Message from client or empty QByteArray if no data
      */
-    virtual QByteArray receiveMessage(qint64 timeout = -1,bool *ok = 0L) = 0;
+    virtual QByteArray getMessage() = 0;
 
+signals:
+
+    /**
+     * @brief Signal emitted when new message has arrived
+     */
+    void newDataArrived();
 };
 
 } //namespace AAA

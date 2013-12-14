@@ -24,6 +24,7 @@ AAAModule::~AAAModule()
 void AAAModule::setConversationInterface(ConversationInterface* conv)
 {
     m_conversationInterface = conv;
+    connect(conv, SIGNAL(newDataArrived()), this, SLOT(newDataArrived()));
 }
 
 } //namespace AAA

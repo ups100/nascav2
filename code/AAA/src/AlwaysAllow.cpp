@@ -30,9 +30,15 @@ void AlwaysAllow::setAdditionalData(const QString &additionalData)
 
 }
 
-bool AlwaysAllow::run()
+void AlwaysAllow::run()
 {
-    return true;
+    emit authorizationFinished(true);
+    return;
+}
+
+void AlwaysAllow::newDataArrived()
+{
+    return;
 }
 
 } //namespace AAA

@@ -11,6 +11,7 @@
 #include "ConversationInterface.h"
 #include <string>
 #include <stdexcept>
+#include <QObject>
 
 namespace INZ_project {
 namespace Base {
@@ -22,9 +23,9 @@ namespace AAA {
 /**
  * @brief Base class for AAA modules
  */
-class AAAModule
+class AAAModule: public QObject
 {
-
+Q_OBJECT
 public:
     /**
      * @brief Constructor
@@ -51,7 +52,7 @@ public:
     /**
      * @brief Runs the identification and authorization process
      */
-    virtual bool run() = 0;
+    virtual void run() = 0;
 
     /**
      * @brief Sets the conversation interface for this object
@@ -75,6 +76,21 @@ public:
         {
         }
     };
+
+protected slots:
+
+    /**
+     * @brief Slot executed when new portion of data has arrived
+     */
+    virtual void newDataArrived() = 0;
+
+signals:
+
+    /**
+     * @brief Signal emitted when authorization process has been finished.
+     * @param[in] result of the authorization
+     */
+    void authorizationFinished(bool result);
 
 protected:
 
