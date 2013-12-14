@@ -22,6 +22,7 @@ namespace TcpStandardModule {
 class MessageCipher : public MessageDecorator
 {
 Q_OBJECT
+public:
     /**
      * @brief Constructor
      * @param[in] messageSink sink directly below this object

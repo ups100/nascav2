@@ -5,6 +5,7 @@
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
 
+#include "MessageSink.h"
 #include "SessionInitializer.h"
 #include "MessageFormer.h"
 #include "MessageCodes.h"

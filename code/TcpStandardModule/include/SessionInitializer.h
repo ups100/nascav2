@@ -24,7 +24,7 @@ namespace TcpStandardModule {
  */
 class SessionInitializer : public SessionPart
 {
-Q_OBJECT
+Q_OBJECT;
 public:
     /**
      * @brief Constructor

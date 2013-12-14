@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <boost/shared_ptr.hpp>
+#include "HashAlgorithm.h"
 
 namespace INZ_project {
 namespace Base {
@@ -58,10 +59,21 @@ public:
     void setClient(Base::ClientSession *client);
 
     /**
+     * @brief Saves the hash algorithm
+     */
+    void setHashAlgorithm(Cryptographic::HashAlgorithm *hash);
+
+    /**
      * @brief Gets the client to which this session belongs to
      * @return Client to which this session belongs or NULL if owner has not been set
      */
     boost::shared_ptr<Base::ClientSession> getClient();
+
+    /**
+     * @brief Gets the hash algorithm used in this session
+     * @return Hash algorithm used in this session or NULL if hash algorithm has not been set
+     */
+    boost::shared_ptr<Cryptographic::HashAlgorithm> getHashAlgorithm();
 
 signals:
     /**
@@ -104,6 +116,7 @@ private:
     QList<SessionPart*> m_partsLeft;
     boost::shared_ptr<MessageSink> m_destination;
     boost::shared_ptr<Base::ClientSession> m_client;
+    boost::shared_ptr<Cryptographic::HashAlgorithm> m_hash;
 };
 
 } //namespace TcpStandardModule

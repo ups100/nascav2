@@ -59,6 +59,16 @@ boost::shared_ptr<Base::ClientSession> Session::getClient()
     return m_client;
 }
 
+void Session::setHashAlgorithm(Cryptographic::HashAlgorithm *hash)
+{
+    m_hash = boost::shared_ptr<Cryptographic::HashAlgorithm>(hash);
+}
+
+boost::shared_ptr<Cryptographic::HashAlgorithm> Session::getHashAlgorithm()
+{
+    return m_hash;
+}
+
 void Session::stopSession()
 {
     if(m_currentSessionPart) {
