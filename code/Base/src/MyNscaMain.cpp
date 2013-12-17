@@ -20,7 +20,7 @@ namespace Base {
 MyNscaMain* MyNscaMain::m_instance = 0L;
 
 MyNscaMain::MyNscaMain(int argc, char **argv)
-        : m_app(argc, argv), m_confPath("config.xml"), m_bufPath("buf")
+        : m_app(argc, argv), m_confPath("config.xml"), m_bufPath("buf"), m_maxBufSize(1024*100)
 {
     if (m_instance == 0L) {
         m_instance = this;
