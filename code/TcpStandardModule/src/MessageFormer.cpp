@@ -20,14 +20,14 @@ MessageFormer::MessageFormer(boost::shared_ptr<MessageSink> messageSink)
 
 void MessageFormer::transformReadData(const QByteArray& message)
 {
-    QByteArray buffer = m_child->read();
-
+    QByteArray buffer = message;
     while (buffer.size() != 0) {
         //Check if we know a size of this message or not
         if (m_size == -1) {
             if (m_receiveBuffer.size() + buffer.size() >= 4) {
-                m_receiveBuffer.append(buffer.left(4 - m_receiveBuffer.size()));
-                buffer = buffer.right(buffer.size() - 4 + m_receiveBuffer.size());
+                int size = 4 - m_receiveBuffer.size();
+                m_receiveBuffer.append(buffer.left(size));
+                buffer = buffer.mid(size);
 
                 //now lets set the size
                 m_size = qFromBigEndian<qint32>((const uchar*)m_receiveBuffer.data());
@@ -40,7 +40,7 @@ void MessageFormer::transformReadData(const QByteArray& message)
                     continue;
                 }
             } else {
-                appendToBuffer(buffer);
+                m_receiveBuffer.append(buffer);
                 return;
             }
         }
@@ -48,9 +48,10 @@ void MessageFormer::transformReadData(const QByteArray& message)
         //we know the size of the message but do we have a whole message?
         if(m_receiveBuffer.size() + buffer.size() >= m_size) {
             //we have the whole message so let's save it
-            m_receiveBuffer.append(buffer.left(m_size - m_receiveBuffer.size()));
+            int size = m_size - m_receiveBuffer.size();
+            m_receiveBuffer.append(buffer.left(size));
             appendToBuffer(m_receiveBuffer);
-            buffer = buffer.right(buffer.size() - m_size + m_receiveBuffer.size());
+            buffer = buffer.mid(size);
 
             m_receiveBuffer.clear();
             m_size = -1;

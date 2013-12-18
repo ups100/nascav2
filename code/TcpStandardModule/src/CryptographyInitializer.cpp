@@ -65,6 +65,7 @@ void CryptographyInitializer::execute()
     connect(destination.get(), SIGNAL(sinkClosed()), this, SLOT(sinkClosed()));
 
     m_state = WAITING_FOR_CLIENT_ID;
+    m_timer.start();
 }
 
 void CryptographyInitializer::terminate()
