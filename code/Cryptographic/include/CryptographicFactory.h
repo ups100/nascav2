@@ -20,6 +20,7 @@ namespace Cryptographic {
 class SymetricAlgorithm;
 class AsymetricAlgorithm;
 class HashAlgorithm;
+class SignAlgorithm;
 
 /**
  * @brief Factory class for cryptographic modules
@@ -66,7 +67,7 @@ public:
     static SymetricAlgorithm* getSymAlgorithm(const QString& id);
 
     /**
-     * @brief Gets the list of accessible Asymmetric algorithms
+     * @brief Gets the list of accessible hash algorithms
      * @return List of accessible Asymmetric algorithms
      */
     static QList<QString> getHashAlgorithmList();
@@ -77,6 +78,19 @@ public:
      * @return Object instance or NULL if no such object registered.
      */
     static HashAlgorithm* getHashAlgorithm(const QString& id);
+
+    /**
+     * @brief Gets the list of accessible sign algorithms
+     * @return List of accessible sign algorithms
+     */
+    static QList<QString> getSignAlgorithmList();
+
+    /**
+     * @brief Gets the Sign algorithm registered with passed id
+     * @param[in] id of the object
+     * @return Object instance or NULL if no such object registered.
+     */
+    static SignAlgorithm* getSignAlgorithm(const QString& id);
 
     /**
      * @brief Registers a passed function as creator function for object with this id
@@ -106,6 +120,16 @@ public:
      *  is being overwritten and log is created
      */
     static void registerFunc(boost::function<HashAlgorithm* ()> function,
+            const QString& id);
+
+    /**
+     * @brief Registers a passed function as creator function for object with this id
+     * @param[in] function to be registered
+     * @param[in] id of object to be registered
+     * @note If object with such id already exist, the creator function
+     *  is being overwritten and log is created
+     */
+    static void registerFunc(boost::function<SignAlgorithm* ()> function,
             const QString& id);
 private:
     /**
@@ -139,6 +163,11 @@ private:
     QMutex m_mutexHash;
 
     /**
+     * @brief Mutex for Sign Algorithms collection
+     */
+    QMutex m_mutexSign;
+
+    /**
      * @brief Instance of this class.
      */
     static CryptographicFactory* m_instance;
@@ -157,6 +186,11 @@ private:
      * @brief Registered Hash Algorithms
      */
     QHash<QString, boost::function<HashAlgorithm* ()> > m_hash;
+
+    /**
+     * @brief Registered Sign Algorithms
+     */
+    QHash<QString, boost::function<SignAlgorithm* ()> > m_sign;
 };
 
 } //namespace Cryptographic

@@ -40,6 +40,9 @@ RSAAlgorithmOAEPUsingSHA::RSAAlgorithmOAEPUsingSHA(const QByteArray& publicKey,
                 static_cast<unsigned>(m_privateKey.length()), true);
 
         m_rawPrivateKey.Load(priv);
+
+        m_encryptor = RSAES_OAEP_SHA_Encryptor(m_rawPublicKey);
+        m_decryptor = RSAES_OAEP_SHA_Decryptor(m_rawPrivateKey);
     } catch (const CryptoPP::Exception& e) {
         m_privateKey.clear();
         m_publicKey.clear();
@@ -58,6 +61,7 @@ RSAAlgorithmOAEPUsingSHA::RSAAlgorithmOAEPUsingSHA(const QByteArray& key,
                     static_cast<unsigned>(m_publicKey.length()), true);
 
             m_rawPublicKey.Load(pub);
+            m_encryptor = RSAES_OAEP_SHA_Encryptor(m_rawPublicKey);
         } else {
             m_privateKey = key;
             StringSource priv(
@@ -65,6 +69,7 @@ RSAAlgorithmOAEPUsingSHA::RSAAlgorithmOAEPUsingSHA(const QByteArray& key,
                     static_cast<unsigned>(m_privateKey.length()), true);
 
             m_rawPrivateKey.Load(priv);
+            m_decryptor = RSAES_OAEP_SHA_Decryptor(m_rawPrivateKey);
         }
     } catch (const CryptoPP::Exception& e) {
         m_publicKey.clear();
@@ -189,7 +194,7 @@ void RSAAlgorithmOAEPUsingSHA::setPublicKey(const QByteArray& partnerKey)
                 static_cast<unsigned>(m_publicKey.length()), true);
 
         m_rawPublicKey.Load(pub);
-
+        m_encryptor = RSAES_OAEP_SHA_Encryptor(m_rawPublicKey);
     } catch (const CryptoPP::Exception& e) {
         m_publicKey.clear();
         throw AsymmetricAlgorithmException(e.what());
@@ -211,7 +216,7 @@ void RSAAlgorithmOAEPUsingSHA::setPrivateKey(const QByteArray& partnerKey)
                 static_cast<unsigned>(m_privateKey.length()), true);
 
         m_rawPrivateKey.Load(priv);
-
+        m_decryptor = RSAES_OAEP_SHA_Decryptor(m_rawPrivateKey);
     } catch (const CryptoPP::Exception& e) {
         m_privateKey.clear();
         throw AsymmetricAlgorithmException(e.what());

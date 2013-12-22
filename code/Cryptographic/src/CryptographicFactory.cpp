@@ -77,6 +77,20 @@ HashAlgorithm* CryptographicFactory::getHashAlgorithm(const QString& id)
     return instance->m_hash.contains(id) ? instance->m_hash[id]() : 0L;
 }
 
+QList<QString> CryptographicFactory::getSignAlgorithmList()
+{
+    QMutexLocker locker(&getInstance()->m_mutexSign);
+    return getInstance()->m_sign.keys();
+}
+
+SignAlgorithm* CryptographicFactory::getSignAlgorithm(const QString& id)
+{
+
+    CryptographicFactory *instance = CryptographicFactory::getInstance();
+    QMutexLocker locker(&instance->m_mutexSign);
+    return instance->m_sign.contains(id) ? instance->m_sign[id]() : 0L;
+}
+
 void CryptographicFactory::registerFunc(
         boost::function<AsymetricAlgorithm* ()> function, const QString& id)
 {
@@ -116,6 +130,18 @@ void CryptographicFactory::registerFunc(
     instance->m_hash.insert(id, function);
 }
 
+void CryptographicFactory::registerFunc(
+        boost::function<SignAlgorithm* ()> function, const QString& id)
+{
+    CryptographicFactory *instance = CryptographicFactory::getInstance();
+    QMutexLocker locker(&instance->m_mutexSign);
+    if (instance->m_sign.contains(id)) {
+        LOG_ENTRY(MyLogger::ERROR,
+                "Object with id="<<id<<" has been already registered." <<" Previous object overwritten.");
+    }
+
+    instance->m_sign.insert(id, function);
+}
 CryptographicFactory *CryptographicFactory::getInstanceHelper()
 {
     static CryptographicFactory instance;

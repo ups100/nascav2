@@ -20,6 +20,8 @@ SET( CRYPTOGRAPHIC_SRC
 		${INZ_SOURCE_DIR}/Cryptographic/src/RSAAlgorithmOAEPUsingSHA.cpp
 		${INZ_SOURCE_DIR}/Cryptographic/src/HashAlgorithm.cpp
 		${INZ_SOURCE_DIR}/Cryptographic/src/SHA256Algorithm.cpp
+		${INZ_SOURCE_DIR}/Cryptographic/src/SignAlgorithm.cpp
+		${INZ_SOURCE_DIR}/Cryptographic/src/RSASSA_PKCSv15_SHA256.cpp
 )
 
 
