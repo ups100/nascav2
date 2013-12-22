@@ -36,9 +36,9 @@ public:
 
     virtual AsymetricAlgorithm* clone();
 
-    virtual QByteArray decrypt(const QByteArray& encrypted, bool usePublic=false);
+    virtual QByteArray decrypt(const QByteArray& encrypted);
 
-    virtual QByteArray encrypt(const QByteArray& plain, bool usePrivate=false);
+    virtual QByteArray encrypt(const QByteArray& plain);
 
     virtual const QByteArray& generateKeys(int keySize=-1);
 

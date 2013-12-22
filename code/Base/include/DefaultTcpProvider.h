@@ -15,6 +15,8 @@
 namespace INZ_project {
 namespace Cryptographic {
 class AsymetricAlgorithm;
+class SignAlgorithm;
+class HashAlgorithm;
 }
 
 namespace Base {
@@ -74,6 +76,8 @@ private:
     qint16 m_port;
 
     boost::shared_ptr<Cryptographic::AsymetricAlgorithm> m_algorithm;
+
+    boost::shared_ptr<Cryptographic::SignAlgorithm> m_signer;
 };
 
 } //namespace Base

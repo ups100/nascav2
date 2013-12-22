@@ -11,8 +11,7 @@
 #include <QObject>
 #include <boost/shared_ptr.hpp>
 
-#include "AsymetricAlgorithm.h"
-#include "HashAlgorithm.h"
+#include "SignAlgorithm.h"
 
 #include "MessageDecorator.h"
 
@@ -25,14 +24,11 @@ Q_OBJECT
     /**
      * @brief Constructor
      * @param[in] messageSink sink directly below this object
-     * @param[in] hash algorithm to be used for hash creation
-     * @param[in] crypt asymmetric algorithm to be used for encryption
-     * @param[in] usePrivate indicates whether private key should be used for encryption
+     * @param[in] signer object which signs the messages
      * @note This object takes the ownership of passed object
      */
     MessageSigner(boost::shared_ptr<MessageSink> messageSink,
-            Cryptographic::HashAlgorithm *hash,
-            Cryptographic::AsymetricAlgorithm *crypt, bool usePrivate);
+            Cryptographic::SignAlgorithm *signer);
 
 protected:
     virtual void transformReadData(const QByteArray& message);
@@ -43,16 +39,9 @@ protected:
 
 private:
     /**
-     * @brief Used Hash algorithm
+     * @brief Used signature algorithm
      */
-    boost::shared_ptr<Cryptographic::HashAlgorithm> m_hash;
-
-    /**
-     * @brief Used Hash cryptography
-     */
-    boost::shared_ptr<Cryptographic::AsymetricAlgorithm> m_crypto;
-
-    bool m_usePrivate;
+    boost::shared_ptr<Cryptographic::SignAlgorithm > m_signer;
 };
 
 } //namespace TcpStandardModule

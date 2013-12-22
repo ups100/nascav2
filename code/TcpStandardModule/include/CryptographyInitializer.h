@@ -11,6 +11,7 @@
 #include "SessionPart.h"
 #include "MessageSink.h"
 #include "HashAlgorithm.h"
+#include "SignAlgorithm.h"
 #include "AsymetricAlgorithm.h"
 #include "SymetricAlgorithm.h"
 
@@ -42,15 +43,19 @@ public:
      * @param[in] asym Asymmetric algorithm used for establishing
      * connection
      * @param[in] provider to which this session belongs to
-     * @param[in] hash algorithm for integrity insurance
+     * @param[in] hash algorithm for integrity insurance.
+     * This object takes the ownership
+     *
+     * @param[in] signer for signing messages.
      * @param[in] session to which this part belongs to
      * @param[in] milis timeout for communication with client
      */
     CryptographyInitializer(const QSet<QString>& allowedAlgorithms,
             INZ_project::Cryptographic::AsymetricAlgorithm *asym,
             INZ_project::Base::DataProvider *provider,
-            INZ_project::Cryptographic::HashAlgorithm *hash, Session *session =
-                    0L, int milis = 10000);
+            INZ_project::Cryptographic::HashAlgorithm *hash,
+            INZ_project::Cryptographic::SignAlgorithm *signer,
+            Session *session = 0L, int milis = 10000);
 
     /**
      * @brief Destructor
@@ -155,6 +160,11 @@ private:
      * @brief Symmetric algorithm which will be used for encryption
      */
     INZ_project::Cryptographic::SymetricAlgorithm *m_sym;
+
+    /**
+     * @brief Signature algorithm which will be used for establishing encryption
+     */
+    INZ_project::Cryptographic::SignAlgorithm *m_signer;
 };
 
 } //namespace TcpStandardModule

@@ -44,8 +44,7 @@ public:
      * @param[in] usePublic use public key instead of private
      * @return decrypted message
      */
-    virtual QByteArray decrypt(const QByteArray& encrypted, bool usePublic =
-            false) = 0;
+    virtual QByteArray decrypt(const QByteArray& encrypted) = 0;
 
     /**
      * @brief Encrypts a message using set public key
@@ -53,8 +52,7 @@ public:
      * @param[in] usePrivate key instead of public
      * @return encrypted message
      */
-    virtual QByteArray encrypt(const QByteArray& plain,
-            bool usePrivate = false) = 0;
+    virtual QByteArray encrypt(const QByteArray& plain) = 0;
 
     /**
      * @brief Generates a pair of public and private key

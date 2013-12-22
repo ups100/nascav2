@@ -22,12 +22,13 @@ CryptographyInitializer::CryptographyInitializer(
         const QSet<QString>& allowedAlgorithms,
         INZ_project::Cryptographic::AsymetricAlgorithm *asym,
         INZ_project::Base::DataProvider *provider,
-        INZ_project::Cryptographic::HashAlgorithm *hash, Session *session,
+        INZ_project::Cryptographic::HashAlgorithm *hash,
+        INZ_project::Cryptographic::SignAlgorithm *signer, Session *session,
         int milis)
         : SessionPart(session, milis), m_state(NONE), m_isStarted(false),
                 m_allowedAlgorithms(allowedAlgorithms), m_asym(asym),
                 m_hash(hash), m_clientSession(0L), m_provider(provider),
-                m_sym(0L)
+                m_sym(0L), m_signer(signer)
 {
     m_timer.setInterval(milis);
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(requestTimedOut()));
@@ -45,7 +46,8 @@ SessionPart *CryptographyInitializer::clone()
     return m_isStarted ?
             0L :
             new CryptographyInitializer(m_allowedAlgorithms, m_asym, m_provider,
-                    m_hash->clone(), m_session, m_timer.interval());
+                    m_hash->clone(), m_signer->clone(), m_session,
+                    m_timer.interval());
 }
 
 void CryptographyInitializer::execute()
@@ -120,11 +122,11 @@ void CryptographyInitializer::clientIdReceived(const QByteArray& message)
                     m_clientSession = new Base::ClientSession(clientId,
                             m_provider);
                     //now we know that this client exist, so let's reply
-                    QByteArray clientHash = m_hash->generateHash(
-                            clientId.toUtf8());
-                    QByteArray plainMessage = MessageCodes::getMessageCode(
-                            MessageCodes::CHOOSE_ALGORITHM) + clientHash;
-                    destination->write(m_asym->encrypt(plainMessage, true));
+                    LOG_ENTRY(MyLogger::INFO,"Client introduced as: "<<clientId);
+
+                    QByteArray signature = m_signer->sign(clientId.toUtf8());
+                    destination->write(MessageCodes::getMessageCode(
+                            MessageCodes::CHOOSE_ALGORITHM) + signature);
                     m_state = WAITING_FOR_ALGORITHM;
                     m_timer.start();
 

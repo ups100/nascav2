@@ -15,6 +15,8 @@
 #include "ClientAuthorizer.h"
 #include "LogsTransmitter.h"
 #include "CryptographicFactory.h"
+#include "SignAlgorithm.h"
+#include "RSASSA_PKCSv15_SHA256.h"
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -31,6 +33,8 @@ DefaultTcpProvider::DefaultTcpProvider()
 {
     m_algorithm = shared_ptr<AsymetricAlgorithm>(
             CryptographicFactory::getAsymAlgorithm("RSA_OAEP_SHA"));
+    m_signer = shared_ptr<SignAlgorithm>(
+               CryptographicFactory::getSignAlgorithm("RSASSA_PKCSv15_SHA256"));
 }
 
 DefaultTcpProvider::~DefaultTcpProvider()
@@ -83,8 +87,8 @@ int DefaultTcpProvider::run()
     //append cryptographic initialization
     version1point0.append(
             shared_ptr<SessionPart>(
-                    new CryptographyInitializer(allowedAlgorithms, m_algorithm.get(),
-                            this, hash)));
+                    new CryptographyInitializer(allowedAlgorithms,
+                            m_algorithm.get(), this, hash, m_signer.get())));
 
     //append client authorization
     version1point0.append(shared_ptr<SessionPart>(new ClientAuthorizer()));
@@ -167,9 +171,13 @@ int DefaultTcpProvider::parseOptions(const QString& options)
 
             try {
                 m_algorithm->setPrivateKey(key);
+                m_signer->setPrivateKey(key);
                 LOG_ENTRY(MyLogger::INFO,
-                                    "Content of "<<fileName.trimmed()<<" used as key file.");
+                        "Content of "<<fileName.trimmed()<<" used as key file.");
             } catch (AsymetricAlgorithm::AsymmetricAlgorithmException& e) {
+                LOG_ENTRY(MyLogger::ERROR,
+                        "Unable to use content of file: "<<fileName<<" as key: "<<e.what());
+            } catch (SignAlgorithm::SignAlgorithmException& e) {
                 LOG_ENTRY(MyLogger::ERROR,
                         "Unable to use content of file: "<<fileName<<" as key: "<<e.what());
             }
@@ -210,6 +218,7 @@ int DefaultTcpProvider::generateKeysToFiles(QFile *privateKey, QFile *publicKey)
         publicKey->write(m_algorithm->getPublicKey());
         privateKey->close();
         publicKey->close();
+        m_signer->setPrivateKey(m_algorithm->getPrivateKey());
 
         LOG_ENTRY(MyLogger::INFO,
                 "Generated key pair: "<<privateKey->fileName()<<" "<< publicKey->fileName());
@@ -221,6 +230,16 @@ int DefaultTcpProvider::generateKeysToFiles(QFile *privateKey, QFile *publicKey)
 
         LOG_ENTRY(MyLogger::ERROR,
                 "Unable to generate new public and private key pare: "<<e.what());
+
+        return -1;
+    } catch (SignAlgorithm::SignAlgorithmException& e) {
+        privateKey->close();
+        publicKey->close();
+        privateKey->remove();
+        publicKey->remove();
+
+        LOG_ENTRY(MyLogger::ERROR,
+                "Unable to use given key for message signing because: "<<e.what());
 
         return -1;
     }

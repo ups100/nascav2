@@ -16,10 +16,8 @@ using namespace Cryptographic;
 namespace TcpStandardModule {
 
 MessageSigner::MessageSigner(boost::shared_ptr<MessageSink> messageSink,
-        Cryptographic::HashAlgorithm *hash,
-        Cryptographic::AsymetricAlgorithm *crypt, bool usePrivate)
-        : MessageDecorator(messageSink), m_hash(hash), m_crypto(crypt),
-                m_usePrivate(usePrivate)
+        Cryptographic::SignAlgorithm *signer)
+        : MessageDecorator(messageSink), m_signer(signer)
 {
 
 }
@@ -28,7 +26,7 @@ void MessageSigner::transformReadData(const QByteArray& message)
 {
     QByteArray rawSize = message.left(4);
     qint32 size = qFromBigEndian<qint32>((const uchar*) rawSize.data());
-    if ((size <= 0) || (message.size() - 4 - size <= 0)) {
+    if ((size <= 0) || (message.size() - 4 - size < 0)) {
         //message is not well-formed
         LOG_ENTRY(MyLogger::ERROR,
                 "Wrong message format. Total size: "<<message.size()<<" Hash Size: "<<size);
@@ -37,12 +35,10 @@ void MessageSigner::transformReadData(const QByteArray& message)
         ///////////////////////////////////
     } else {
         //we have the message now it's time to decrypt the sign
-        QByteArray rawMessage = message.right(message.size() - 4);
-        QByteArray rawHash = rawMessage.right(size);
+        QByteArray rawMessage = message.mid(4, message.size() - 4 - size);
+        QByteArray rawSignature = message.right(size);
         try {
-            QByteArray hash = m_crypto->decrypt(rawHash);
-            if (m_hash->verifyHash(rawMessage.left(rawMessage.size() - size),
-                    hash)) {
+            if (m_signer->verify(rawMessage, rawSignature)) {
                 appendToBuffer(rawMessage.left(rawMessage.size() - size));
             } else {
                 LOG_ENTRY(MyLogger::ERROR,
@@ -51,15 +47,9 @@ void MessageSigner::transformReadData(const QByteArray& message)
                 //emit SocketError() TODO
                 ///////////////////////////////////
             }
-        } catch (const HashAlgorithm::HashAlgorithmException &e) {
+        } catch (const SignAlgorithm::SignAlgorithmException &e) {
             LOG_ENTRY(MyLogger::ERROR,
                     "Unable to validate a message: "<<message<<" because: "<<e.what());
-            ///////////////////////////////////
-            //emit SocketError() TODO
-            ///////////////////////////////////
-        } catch (const AsymetricAlgorithm::AsymmetricAlgorithmException &e) {
-            LOG_ENTRY(MyLogger::ERROR,
-                    "Unable to decrypt a hash: "<<rawHash<<" because: "<<e.what());
             ///////////////////////////////////
             //emit SocketError() TODO
             ///////////////////////////////////
@@ -69,27 +59,20 @@ void MessageSigner::transformReadData(const QByteArray& message)
 
 QByteArray MessageSigner::transformWriteData(const QByteArray& message)
 {
-    QByteArray hash;
-    qint32 hashSize;
+    QByteArray signature;
+    qint32 signatureSize;
     try {
-        hash = m_hash->generateHash(message);
-        hash = this->m_crypto->encrypt(hash, m_usePrivate);
-        hashSize = hash.size();
-    } catch (const HashAlgorithm::HashAlgorithmException &e) {
+        signature = m_signer->sign(message);
+        signatureSize = signature.size();
+    } catch (const SignAlgorithm::SignAlgorithmException &e) {
         LOG_ENTRY(MyLogger::ERROR,
-                "Unable to hash a message: "<<message<<" because: "<<e.what());
-        ///////////////////////////////////
-        //emit SocketError() TODO
-        ///////////////////////////////////
-    } catch (const AsymetricAlgorithm::AsymmetricAlgorithmException &e) {
-        LOG_ENTRY(MyLogger::ERROR,
-                "Unable to encrypt a message: "<<message<<" because: "<<e.what());
+                "Unable to validate a message: "<<message<<" because: "<<e.what());
         ///////////////////////////////////
         //emit SocketError() TODO
         ///////////////////////////////////
     }
-    hashSize = qToBigEndian(hashSize);
-    return QByteArray((char *)&hashSize, 4) + message + hash;
+    signatureSize = qToBigEndian(signatureSize);
+    return QByteArray((char *)&signatureSize, 4) + message + signature;
 }
 
 void MessageSigner::closeThisSink()

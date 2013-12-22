@@ -94,8 +94,7 @@ AsymetricAlgorithm* RSAAlgorithmOAEPUsingSHA::clone()
     return other;
 }
 
-QByteArray RSAAlgorithmOAEPUsingSHA::decrypt(const QByteArray& encrypted,
-        bool usePublic)
+QByteArray RSAAlgorithmOAEPUsingSHA::decrypt(const QByteArray& encrypted)
 {
     if (m_privateKey.isEmpty()) {
         throw AsymmetricAlgorithmException(
@@ -118,8 +117,7 @@ QByteArray RSAAlgorithmOAEPUsingSHA::decrypt(const QByteArray& encrypted,
 
 }
 
-QByteArray RSAAlgorithmOAEPUsingSHA::encrypt(const QByteArray& plain,
-        bool usePrivate)
+QByteArray RSAAlgorithmOAEPUsingSHA::encrypt(const QByteArray& plain)
 {
     if (m_publicKey.isEmpty()) {
         throw AsymmetricAlgorithmException(
