@@ -105,6 +105,9 @@ const QByteArray& AESAlgorithmCBCMode::generateKey(int keySize, int blockSize)
     byte *key;
     byte *iv;
 
+    keySize = keySize < 0 ? m_allowedKeySizes.first() : keySize;
+    blockSize = blockSize < 0 ? m_allowedBlockSizes.first() : blockSize;
+
     if (!m_allowedKeySizes.contains(keySize)
             || !m_allowedBlockSizes.contains(blockSize)) {
         throw SymmetricAlgorithmException("Unsupported IV or Key length");
