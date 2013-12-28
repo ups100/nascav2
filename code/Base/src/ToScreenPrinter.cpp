@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QMetaObject>
 #include "ReadPortion.h"
+#include "DataFile.h"
 
 namespace INZ_project {
 namespace Base {
@@ -31,14 +32,15 @@ void ToScreenPrinter::close()
     m_thread.endThread();
 }
 
-void ToScreenPrinter::consumeDataPortion(const ReadPortion *portion)
+void ToScreenPrinter::consumeDataPortion(const ReadPortion *portion,
+        QObject* toConfirm, QString confirmMethod)
 {
     foreach(QString log, portion->getLogs()) {
         LOG_ENTRY(MyLogger::INFO, log);
     }
 
-    QMetaObject::invokeMethod(sender(),
-                        "confirmPortion", Qt::QueuedConnection,
+    QMetaObject::invokeMethod(toConfirm,
+            confirmMethod.toStdString().c_str(), Qt::QueuedConnection,
                         Q_ARG(const ReadPortion*, portion));
 }
 

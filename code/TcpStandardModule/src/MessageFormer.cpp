@@ -50,11 +50,11 @@ void MessageFormer::transformReadData(const QByteArray& message)
             //we have the whole message so let's save it
             int size = m_size - m_receiveBuffer.size();
             m_receiveBuffer.append(buffer.left(size));
+            m_size = -1;
             appendToBuffer(m_receiveBuffer);
             buffer = buffer.mid(size);
 
             m_receiveBuffer.clear();
-            m_size = -1;
         } else {
             //we don't have the whole message so let's store what we have
             m_receiveBuffer.append(buffer);

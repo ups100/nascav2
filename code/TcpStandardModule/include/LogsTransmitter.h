@@ -103,7 +103,8 @@ private:
 
     enum {
         WAITING_FOR_LOG,
-        WRITTING_LOG
+        WRITTING_LOG,
+        NONE
     } m_state;
 
     Base::DataChannel *m_channel;

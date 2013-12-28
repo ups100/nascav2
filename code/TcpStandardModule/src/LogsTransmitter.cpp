@@ -19,8 +19,10 @@ using INZ_project::Base::DataPortion;
 namespace INZ_project {
 namespace TcpStandardModule {
 
-LogsTransmitter::LogsTransmitter(Base::DataProvider *provider, Session *session, int milis)
-        : SessionPart(session, milis), m_isStarted(false), m_channel(0L), m_provider(provider)
+LogsTransmitter::LogsTransmitter(Base::DataProvider *provider, Session *session,
+        int milis)
+        : SessionPart(session, milis), m_isStarted(false), m_channel(0L),
+                m_provider(provider), m_state(NONE)
 {
     m_timer.setInterval(milis);
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(requestTimedOut()));
@@ -34,7 +36,8 @@ LogsTransmitter::~LogsTransmitter()
 
 SessionPart *LogsTransmitter::clone()
 {
-    return m_isStarted ? 0L : new LogsTransmitter(m_provider,m_session, m_timer.interval());
+    return m_isStarted ?
+            0L : new LogsTransmitter(m_provider, m_session, m_timer.interval());
 }
 
 void LogsTransmitter::execute()
@@ -56,6 +59,7 @@ void LogsTransmitter::execute()
         //we have data channel so let's notify client that we are waiting for logs
         destination->write(
                 MessageCodes::getMessageCode(MessageCodes::WAITING_FOR_LOGS));
+        m_state = WAITING_FOR_LOG;
         m_timer.start();
     } else {
         LOG_ENTRY(MyLogger::INFO,
@@ -102,7 +106,8 @@ void LogsTransmitter::readNextMessage()
 
         default:
             LOG_ENTRY(MyLogger::DEBUG,
-                    "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.");
+                    "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.")
+            ;
             //close the session
             disconnectAll();
             emit finished(false);
@@ -212,8 +217,8 @@ void LogsTransmitter::disconnectAll()
             SLOT(sinkClosed()));
     disconnect(&m_timer, SIGNAL(timeout()), this, SLOT(requestTimedOut()));
     if (m_channel) {
-        disconnect(m_channel, SIGNAL(portionWritten(DataPortion*)), this,
-                SLOT(portionWritten(DataPortion*)));
+        disconnect(m_channel, SIGNAL(portionWritten(qint64)), this,
+                SLOT(portionWritten(qint64)));
     }
 
 }

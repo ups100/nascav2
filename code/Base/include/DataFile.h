@@ -115,7 +115,7 @@ protected slots:
      *  to all data providers
      * @param[in] portion which has been submitted
      */
-    void confirmPortion(ReadPortion *portion);
+    void confirmPortion(const ReadPortion *portion);
 
 signals:
 

@@ -10,6 +10,7 @@
 
 #include <QList>
 #include <QString>
+#include <QMetaType>
 #include <boost/shared_ptr.hpp>
 
 namespace INZ_project {
@@ -73,7 +74,9 @@ private:
     boost::shared_ptr<QList<QString> > m_logs;
 
 };
-
 } //namespace Base
 } //namespace INZ_project
+
+Q_DECLARE_METATYPE(const INZ_project::Base::ReadPortion*)
+
 #endif //__BASE_READ_PORTION_H__

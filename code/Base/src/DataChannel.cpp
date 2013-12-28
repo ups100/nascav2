@@ -84,15 +84,15 @@ bool DataChannel::write(const DataPortion& portion)
 int DataChannel::scheduleForWrite(const DataPortion& portion)
 {
     int ret = 0;
-    if (portion.getClient() != m_client) {
+    if (portion.getClient().simplified() != m_client.simplified()) {
         LOG_ENTRY(MyLogger::DEBUG,
-                "Trying to write logs from: "<<portion.getClient() <<"to channel which belongs to "<<m_client);
+                "Trying to write logs from: "<<portion.getClient() <<" to channel which belongs to "<<m_client);
         ret = -1;
     }
 
-    if (portion.getProvider() != m_provider) {
+    if (portion.getProvider().simplified() != m_provider.simplified()) {
         LOG_ENTRY(MyLogger::DEBUG,
-                "Trying to write logs received via: "<<portion.getProvider() <<"to channel which starts in "<<m_provider);
+                "Trying to write logs received via: "<<portion.getProvider() <<" to channel which starts in "<<m_provider);
         ret = -1;
     }
 

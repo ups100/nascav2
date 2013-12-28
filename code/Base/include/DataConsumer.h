@@ -75,7 +75,8 @@ public:
 
 public slots:
 
-    virtual void consumeDataPortion(const ReadPortion *portion)=0;
+    virtual void consumeDataPortion(const ReadPortion *portion,
+            QObject *toConfirm, QString confirmMethod)=0;
 
 private:
     /**
@@ -88,8 +89,8 @@ private:
      * @note Default implementation simply does nothing and return 0.
      * Override this function to initialize your subclass.
      */
-    virtual int initImpl(const QString& additionalData, const QString& consumerId,
-            const QString& consumerType);
+    virtual int initImpl(const QString& additionalData,
+            const QString& consumerId, const QString& consumerType);
 
     /**
      * @brief Consumer type string

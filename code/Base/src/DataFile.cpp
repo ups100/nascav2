@@ -19,7 +19,7 @@ namespace Base {
 
 DataFile::DataFile()
         : m_maxSize(0), m_firstLog(-1), m_toRead(-1), m_toWrite(-1),
-                m_currentLogEnd(-1), m_nmbDest(-1)
+                m_currentLogEnd(-1), m_nmbDest(-1), m_portion(0L)
 {
 
 }
@@ -44,6 +44,8 @@ bool DataFile::setFile(const QString& fileName, qint64 maxSize)
     }
 
     m_file.setFileName(fileName);
+
+    m_maxSize = maxSize;
 
     if (!m_file.exists()) {
         //file don't exist so we have to create it and set our structure
@@ -82,8 +84,6 @@ bool DataFile::setFile(const QString& fileName, qint64 maxSize)
         LOG_ENTRY(MyLogger::ERROR, "Unable to open "<<fileName<<" for RW");
         return false;
     }
-
-    m_maxSize = maxSize;
 
     QDataStream stream(&m_file);
     stream >> m_toWrite >> m_toRead;
@@ -223,9 +223,9 @@ bool DataFile::write(const QString& client, const QString& provider,
 {
     QByteArray logsArray;
     logsArray.append(QString().setNum(logs.size()) + "\n");
-    foreach(QString log, logs) {
-        logsArray.append(log);
-    }
+    foreach(QString log, logs){
+    logsArray.append(log);
+}
 
     qint64 size = header.size() + logsArray.size();
 
@@ -255,9 +255,9 @@ qint64 DataFile::scheduleForWrite(const QString& client,
 {
     QByteArray logsArray;
     logsArray.append(QString().setNum(logs.size()) + "\n");
-    foreach(QString log, logs) {
-        logsArray.append(log);
-    }
+    foreach(QString log, logs){
+    logsArray.append(log);
+}
 
     qint64 size = header.size() + logsArray.size();
 
@@ -284,8 +284,8 @@ qint64 DataFile::scheduleForWrite(const QString& client,
 
     //There is some pending request so let's enqueue this one
     if (!written) {
-        boost::shared_ptr<Request> rq = boost::shared_ptr<Request>(new Request(client, provider, consumers,
-                header, logs, size));
+        boost::shared_ptr<Request> rq = boost::shared_ptr<Request>(
+                new Request(client, provider, consumers, header, logs, size));
 
         rq->id =
                 !m_requestQueue.empty() ?
@@ -388,11 +388,12 @@ bool DataFile::writeImpl(const QString& client, const QString& provider,
         m_portion = new ReadPortion(logs, client, provider);
         m_nmbDest = consumers.size();
 
-        foreach(DataConsumer* consumer, consumers) {
-            QMetaObject::invokeMethod(consumer, "consumeDataPortion",
-                    Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion));
-        }
+        foreach(DataConsumer* consumer, consumers){
+        QMetaObject::invokeMethod(consumer, "consumeDataPortion",
+                Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion),
+                Q_ARG(QObject*, this), Q_ARG(QString, "confirmPortion"));
     }
+}
 
     m_toWrite = writeTmp;
     m_toRead = readTmp;
@@ -474,17 +475,17 @@ void DataFile::readAndDistribute()
         m_portion = new ReadPortion(logs, client, provider);
         m_nmbDest = destCount;
 
-        foreach(DataConsumer* consumer, destinations) {
-            QMetaObject::invokeMethod(consumer, "consumeDataPortion",
-                    Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion));
-        }
-    } catch (const QString& e) {
-        delete logs;
-        return;
+        foreach(DataConsumer* consumer, destinations){
+        QMetaObject::invokeMethod(consumer, "consumeDataPortion",
+                Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion));
     }
+} catch (const QString& e) {
+    delete logs;
+    return;
+}
 }
 
-void DataFile::confirmPortion(ReadPortion *portion)
+void DataFile::confirmPortion(const ReadPortion *portion)
 {
     if (portion == 0L)
         return;
@@ -508,10 +509,11 @@ void DataFile::confirmPortion(ReadPortion *portion)
                 return;
             }
 
-            if (m_file.write(buf) < 0) {
+            if (m_file.write(buf) < 16) {
                 LOG_ENTRY(MyLogger::ERROR, "Unable to write to buffer.");
                 return;
             }
+            m_file.flush();
 
             m_currentLogEnd = -1;
             m_toRead = -1;
@@ -550,18 +552,19 @@ void DataFile::popNextFromQueue()
         QByteArray logsArray;
 
         logsArray.append(QString().setNum(rq->logs.size()) + "\n");
-        foreach(QString log, rq->logs) {
-            logsArray.append(log);
-        }
+        foreach(QString log, rq->logs){
+        logsArray.append(log);
+    }
 
-        bool result = writeImpl(rq->client, rq->provider, rq->consumers, rq->header, rq->logs,
-                logsArray);
+        bool result = writeImpl(rq->client, rq->provider, rq->consumers,
+                rq->header, rq->logs, logsArray);
 
-        if(result) {
+        if (result) {
             LOG_ENTRY(MyLogger::INFO, "Request #"<<rq->id<<" written.");
             emit requestWritten(rq->id);
         } else {
-            LOG_ENTRY(MyLogger::ERROR, "Unable to write to buffer request #"<<rq->id);
+            LOG_ENTRY(MyLogger::ERROR,
+                    "Unable to write to buffer request #"<<rq->id);
         }
     }
 }

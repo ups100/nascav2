@@ -14,6 +14,7 @@ ReadPortion::ReadPortion(const QList<QString>& logs, const QString& client,
         const QString& provider)
 :m_client(client), m_provider(provider)
 {
+    qRegisterMetaType<const ReadPortion*>("const ReadPortion*");
     m_logs = boost::shared_ptr<QList<QString> >(new QList<QString>(logs));
 }
 

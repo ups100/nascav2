@@ -21,11 +21,12 @@ public:
 
     virtual void close();
 
-    void consumeDataPortion(const ReadPortion *portion);
+    void consumeDataPortion(const ReadPortion *portion, QObject* toConfirm,
+            QString confirmMethod);
 
 protected:
-    virtual int initImpl(const QString& additionalData, const QString& providerId,
-                const QString& providerType);
+    virtual int initImpl(const QString& additionalData,
+            const QString& providerId, const QString& providerType);
 
 private:
 
