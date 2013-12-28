@@ -206,7 +206,7 @@ QSet<QString> ConfigurationParser::getRoutes(const QString& client,
 
     QList<QString> rulesList = consumersRaw.toList();
     for (QList<QString>::iterator it = rulesList.begin(); it != rulesList.end();
-            ) {
+           ++it) {
         if (*it == parser->m_starString) {
             //We need to add every one so let's do this
             //When this is clear we know that there will be no groups but only valid members
