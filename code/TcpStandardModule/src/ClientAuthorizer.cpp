@@ -107,7 +107,7 @@ void ClientAuthorizer::moduleIdReceived(const QByteArray& message)
             if (!client) {
                 //Session part executed but there is no client
                 LOG_ENTRY(MyLogger::ERROR,
-                        "Client authorization in pr`ogress, but client has not been set.");
+                        "Client authorization in progress, but client has not been set.");
                 disconnectAll();
                 emit finished(false);
                 break;
@@ -127,7 +127,7 @@ void ClientAuthorizer::moduleIdReceived(const QByteArray& message)
                         "Unable to authorize client: "<<client->getClientId()<<" using: "<<moduleId);
 
                 disconnect(client.get(), SIGNAL(authorizationFinished(bool)),
-                        this, SLOT(clientAuthFinished(bool)));
+                        this, SLOT(authorizationFinished(bool)));
                 disconnect(&m_coversationInterface, SIGNAL(newDataToWrite()),
                         this, SLOT(writeAuthData()));
 
@@ -174,7 +174,7 @@ void ClientAuthorizer::authorizationFinished(bool result)
 {
     shared_ptr<ClientSession> client = m_session->getClient();
     disconnect(client.get(), SIGNAL(authorizationFinished(bool)), this,
-            SLOT(clientAuthFinished(bool)));
+            SLOT(authorizationFinished(bool)));
     disconnect(&m_coversationInterface, SIGNAL(newDataToWrite()), this,
             SLOT(writeAuthData()));
 
