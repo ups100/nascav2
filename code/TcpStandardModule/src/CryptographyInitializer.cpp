@@ -101,7 +101,8 @@ void CryptographyInitializer::readNextMessage()
             keyReceived(message);
             break;
         default:
-            LOG_ENTRY(MyLogger::FATAL, "We should not be here");
+            LOG_ENTRY(MyLogger::FATAL, "We should not be here")
+            ;
             m_timer.start();
             break;
     }
@@ -122,11 +123,14 @@ void CryptographyInitializer::clientIdReceived(const QByteArray& message)
                     m_clientSession = new Base::ClientSession(clientId,
                             m_provider);
                     //now we know that this client exist, so let's reply
-                    LOG_ENTRY(MyLogger::INFO,"Client introduced as: "<<clientId);
+                    LOG_ENTRY(MyLogger::INFO,
+                            "Client introduced as: "<<clientId);
 
                     QByteArray signature = m_signer->sign(clientId.toUtf8());
-                    destination->write(MessageCodes::getMessageCode(
-                            MessageCodes::CHOOSE_ALGORITHM) + signature);
+                    destination->write(
+                            MessageCodes::getMessageCode(
+                                    MessageCodes::CHOOSE_ALGORITHM)
+                                    + signature);
                     m_state = WAITING_FOR_ALGORITHM;
                     m_timer.start();
 
@@ -141,7 +145,8 @@ void CryptographyInitializer::clientIdReceived(const QByteArray& message)
                 break;
             default:
                 LOG_ENTRY(MyLogger::DEBUG,
-                        "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.");
+                        "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.")
+                ;
                 //close the session
                 disconnectAll();
                 emit finished(false);
@@ -187,7 +192,8 @@ void CryptographyInitializer::algorithmReceived(const QByteArray& message)
                 break;
             default:
                 LOG_ENTRY(MyLogger::DEBUG,
-                        "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.");
+                        "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.")
+                ;
                 //close the session
                 disconnectAll();
                 emit finished(false);
@@ -207,18 +213,16 @@ void CryptographyInitializer::keyReceived(const QByteArray& message)
         boost::shared_ptr<MessageSink> destination =
                 m_session->getDestination();
 
-        //decrypt the message
-        QByteArray plainMessage = decrypted.right(decrypted.length() - 1);
-        QByteArray hashLength = plainMessage.left(4);
+        //check the integrity of message
+        QByteArray hashLength = decrypted.left(4);
         int length = qFromBigEndian<qint32>((const uchar*) hashLength.data());
         if (length <= 0) {
             LOG_ENTRY(MyLogger::ERROR, "Wrong message format. Size: "<<length);
             disconnectAll();
             emit finished(false);
         }
-        QByteArray hash = plainMessage.right(length);
-        QByteArray plain = plainMessage.mid(4,
-                plainMessage.size() - 4 - length);
+        QByteArray hash = decrypted.right(length);
+        QByteArray plain = decrypted.mid(4, decrypted.size() - 4 - length);
 
         if (!m_hash->verifyHash(plain, hash)) {
             LOG_ENTRY(MyLogger::ERROR, "Incorrect hash given");
@@ -230,9 +234,10 @@ void CryptographyInitializer::keyReceived(const QByteArray& message)
             case MessageCodes::ESTABLISH_ENCRYPTION: {
                 //We have suitable message, let's set the key
                 try {
-                    int keySize = plain[1];
-                    m_sym->setKey(plain.mid(2, keySize));
-                    m_sym->setIv(plain.mid(2 + keySize));
+                    int keySize = qFromBigEndian<qint32>(
+                            (const uchar*) plain.mid(1, 4).data());
+                    m_sym->setKey(plain.mid(5, keySize));
+                    m_sym->setIv(plain.mid(5 + keySize));
 
                     //Key has been successfully set, so let's set up sinks
                     boost::shared_ptr<MessageSink> cipher = boost::shared_ptr<
@@ -241,13 +246,16 @@ void CryptographyInitializer::keyReceived(const QByteArray& message)
                     m_sym = 0L;
 
                     boost::shared_ptr<MessageSink> hasher = boost::shared_ptr<
-                            MessageSink>(new MessageHasher(cipher, m_hash));
+                            MessageSink>(new MessageHasher(cipher, m_hash->clone()));
                     m_session->setDestination(hasher);
-                    m_hash = 0L;
 
                     //inform session that it belongs to this client
                     m_session->setClient(m_clientSession);
                     m_clientSession = 0L;
+
+                    //set hash algorithm
+                    m_session->setHashAlgorithm(m_hash);
+                    m_hash = 0L;
 
                     //This session part has been finished, cryptography is set
                     disconnectAll();
@@ -264,7 +272,8 @@ void CryptographyInitializer::keyReceived(const QByteArray& message)
                 break;
             default:
                 LOG_ENTRY(MyLogger::DEBUG,
-                        "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.");
+                        "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.")
+                ;
                 //close the session
                 disconnectAll();
                 emit finished(false);
