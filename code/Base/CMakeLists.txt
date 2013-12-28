@@ -32,6 +32,7 @@ SET( BASE_SRC
 		${INZ_SOURCE_DIR}/Base/include/MyNscaMain.h
 		${INZ_SOURCE_DIR}/Base/src/DefaultTcpProvider.cpp
 		${INZ_SOURCE_DIR}/Base/src/ToScreenPrinter.cpp
+		${INZ_SOURCE_DIR}/Base/src/ToIcingaWritter.cpp
 		${INZ_SOURCE_DIR}/Base/include/ClientSession.h
 		${INZ_SOURCE_DIR}/Base/include/DataChannel.h
 )
