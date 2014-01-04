@@ -10,9 +10,19 @@
 #include "DataConsumerFactory.h"
 #include "DataProviderFactory.h"
 #include "DataFile.h"
+#include <string>
+#include <iostream>
 #include <QFile>
 #include <QDir>
 #include <QTimer>
+
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/option.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/value_semantic.hpp>
+#include <boost/program_options/parsers.hpp>
+
+using namespace boost::program_options;
 
 namespace INZ_project {
 namespace Base {
@@ -20,7 +30,10 @@ namespace Base {
 MyNscaMain* MyNscaMain::m_instance = 0L;
 
 MyNscaMain::MyNscaMain(int argc, char **argv)
-        : m_app(argc, argv), m_confPath("config.xml"), m_bufPath("buf"), m_maxBufSize(1024*100)
+        : m_app(argc, argv), m_confPath("config.xml"), m_bufPath("buf"),
+                m_maxBufSize(1024 * 100),
+                m_desc(
+                        "Author: Krzysztof Opasiak <ups100@tlen.pl>\n Allowed options")
 {
     if (m_instance == 0L) {
         m_instance = this;
@@ -29,6 +42,16 @@ MyNscaMain::MyNscaMain(int argc, char **argv)
                 "Another instance of MyNscaMain has been created!");
         throw MyNscaMainException("Another instance is alive");
     }
+
+    m_desc.add_options()("help", "Prints this help message")("check",
+            "Only check the configuration file instead of running whole program")(
+            "consume", "Run consumers only")("conf_file", value<std::string>(),
+            "Use this configuration file")("buffers", value<std::string>(),
+            "Use this directory for buffers")("maxBufferSize", value<qint64>(),
+            "Set max size of single buffer. Has to be larger than 1024");
+
+    store(parse_command_line(argc, argv, m_desc), m_vm);
+    notify(m_vm);
 }
 
 MyNscaMain::~MyNscaMain()
@@ -96,7 +119,36 @@ int MyNscaMain::startOnlyConsumers()
 
 MyNscaMain::WhatToDo MyNscaMain::parseCommandLineArgs()
 {
-    return START_PROGRAM;
+    WhatToDo ret = START_PROGRAM;
+
+    if (m_vm.count("help")) {
+        ret = PRINT_HELP;
+    } else if (m_vm.count("consume")) {
+        ret = START_ONLY_CONSUMERS;
+    } else if (m_vm.count("check")) {
+        ret = CHECK_CONFIGURATION_FILE;
+    }
+
+    LOG_ENTRY(MyLogger::DEBUG, m_vm.count("conf_file"))
+    if (m_vm.count("conf_file") && m_vm.count("conf_file") == 1) {
+        m_confPath = QString::fromStdString(m_vm["conf_file"].as<std::string>());
+    }
+
+    if (m_vm.count("buffers") && m_vm.count("buffers") == 1) {
+        m_bufPath = QString::fromStdString(m_vm["conf_file"].as<std::string>());
+    }
+
+    if (m_vm.count("maxBufferSize") && m_vm.count("maxBufferSize") == 1) {
+        qint64 val = m_vm["maxBufferSize"].as<qint64>();
+
+        if(val <= 1024) {
+            ret = PRINT_HELP;
+        } else {
+            m_maxBufSize = val;
+        }
+    }
+
+    return ret;
 }
 
 int MyNscaMain::startProgram()
@@ -134,7 +186,7 @@ int MyNscaMain::startProgram()
 
 int MyNscaMain::printHelp()
 {
-    LOG_ENTRY(MyLogger::FATAL, "Help text");
+    std::cerr << m_desc;
     return -1;
 }
 

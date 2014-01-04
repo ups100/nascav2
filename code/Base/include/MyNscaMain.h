@@ -15,6 +15,8 @@
 #include <QString>
 #include <boost/shared_ptr.hpp>
 #include <QCoreApplication>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
 
 namespace INZ_project {
 namespace Base {
@@ -214,6 +216,16 @@ private:
      * @brief Maximum size of each buffer file.
      */
     qint64 m_maxBufSize;
+
+    /**
+     * @brief Description of allowed program options
+     */
+    boost::program_options::options_description m_desc;
+
+    /**
+     * @brief Map of options which has been passed from command line.
+     */
+    boost::program_options::variables_map m_vm;
 };
 
 } //namespace Base

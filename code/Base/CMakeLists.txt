@@ -41,6 +41,7 @@ add_executable( base ${BASE_SRC} )
 
 TARGET_LINK_LIBRARIES(	base 
 		${Boost_LIBRARIES}
+		boost_program_options
 		-Wl,-whole-archive
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/liblogger.a
 		${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libaaamodule.a
