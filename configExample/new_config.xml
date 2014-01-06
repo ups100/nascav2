@@ -7,11 +7,6 @@
 				<key>PrivateKey:./keys/Providers::Provider1.priv</key>
 			</additional_data>
 		</data_provider>
-		<data_provider id="Provider2" type="DefaultTcpProvider">
-			<additional_data>
-				//cokolwiek tutaj
-			</additional_data>
-		</data_provider>
 	</data_providers>
 	<data_consumers id="Consumers">
 		<data_consumer id="Consumer1" type="ToScreenPrinter">
@@ -25,6 +20,10 @@
 			<aaa_data>
 				<aaa_module type="AlwaysAllow">
 					//cokolwiek tutaj
+				</aaa_module>
+				<aaa_module type="LoginPass">
+					<password>Password: PasswordTestowe</password>
+					<login>Login: LoginTestowy</login>
 				</aaa_module>
 			</aaa_data>
 		</client>

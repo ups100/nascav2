@@ -307,7 +307,7 @@ int main(void)
 
     plainMessage = MessageCodes::getMessageCode(
             MessageCodes::CHOOSEN_AUTH_MODULE)
-            + QString("AlwaysAllow").toUtf8();
+            + QString("LoginPass").toUtf8();
 
     messageHash = hash->generateHash(plainMessage);
 
@@ -332,6 +332,151 @@ int main(void)
         return -1;
     }
     LOG_ENTRY(MyLogger::INFO, "CHOOSEN_AUTH_MODULE sent");
+
+    if (socket.bytesAvailable() == 0 && !socket.waitForReadyRead()) {
+        LOG_ENTRY(MyLogger::ERROR, "No data received");
+        return -1;
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // LOGIN PASS AUTH
+    ///////////////////////////////////////////////////////////////////////
+    //get AUTH_DATA
+    message = socket.readAll();
+
+    size = qFromBigEndian<qint32>((const uchar*) message.data());
+    LOG_ENTRY(MyLogger::INFO, "Message received. Size: "<<size);
+    message = message.mid(4);
+
+    //check the hash
+    plainMessage = sym->decrypt(message);
+    size = qFromBigEndian<qint32>((const uchar*) plainMessage.data());
+    messageHash = plainMessage.right(size);
+    plainMessage = plainMessage.mid(4, plainMessage.size() - 4 - size);
+
+    if (!hash->verifyHash(plainMessage, messageHash)) {
+        LOG_ENTRY(MyLogger::ERROR, "Wrong hash given");
+        return -1;
+    }
+
+    if (MessageCodes::getMessageType(plainMessage) != MessageCodes::AUTH_DATA) {
+        LOG_ENTRY(MyLogger::ERROR,
+                "Received wrong message: "<<MessageCodes::getMessageType(plainMessage)<<" size: "<<plainMessage.size());
+        return -1;
+    }
+    LOG_ENTRY(MyLogger::INFO, "Received AUTH_DATA");
+
+    plainMessage = plainMessage.mid(1);
+
+    if (plainMessage[0] != (char)0) {
+        LOG_ENTRY(MyLogger::ERROR, "Received wrong auth message");
+        return -1;
+    }
+    LOG_ENTRY(MyLogger::INFO, "Received REQUEST_LOGIN");
+
+    ////////////////////
+    // send LOGIN
+    ///////////////////
+
+    char authCode = 1;
+    plainMessage = MessageCodes::getMessageCode(MessageCodes::AUTH_DATA)
+            + QByteArray(&authCode, 1) + QString("LoginTestowy").toUtf8();
+
+    messageHash = hash->generateHash(plainMessage);
+
+    qToBigEndian((qint32) messageHash.size(), rawSize);
+
+    message = QByteArray((char*) rawSize, 4) + plainMessage + messageHash;
+
+    try {
+        message = sym->encrypt(message);
+    } catch (...) {
+        LOG_ENTRY(MyLogger::ERROR, "Unable to encrypt");
+        return -1;
+    }
+
+    qToBigEndian((qint32) message.size(), rawSize);
+    LOG_ENTRY(MyLogger::INFO, message.size());
+    message = QByteArray((char*) rawSize, 4) + message;
+
+    socket.write(message);
+    if (!socket.waitForBytesWritten()) {
+        LOG_ENTRY(MyLogger::ERROR, "Unable to send data");
+        return -1;
+    }
+    LOG_ENTRY(MyLogger::INFO, "AUTH_DATA sent");
+
+    if (socket.bytesAvailable() == 0 && !socket.waitForReadyRead()) {
+        LOG_ENTRY(MyLogger::ERROR, "No data received");
+        return -1;
+    }
+
+    ////////////////////
+    // get REQUEST_PASSWORD
+    ///////////////////
+    message = socket.readAll();
+
+    size = qFromBigEndian<qint32>((const uchar*) message.data());
+    LOG_ENTRY(MyLogger::INFO, "Message received. Size: "<<size);
+    message = message.mid(4);
+
+    //check the hash
+    plainMessage = sym->decrypt(message);
+    size = qFromBigEndian<qint32>((const uchar*) plainMessage.data());
+    messageHash = plainMessage.right(size);
+    plainMessage = plainMessage.mid(4, plainMessage.size() - 4 - size);
+
+    if (!hash->verifyHash(plainMessage, messageHash)) {
+        LOG_ENTRY(MyLogger::ERROR, "Wrong hash given");
+        return -1;
+    }
+
+    if (MessageCodes::getMessageType(plainMessage) != MessageCodes::AUTH_DATA) {
+        LOG_ENTRY(MyLogger::ERROR,
+                "Received wrong message: "<<MessageCodes::getMessageType(plainMessage)<<" size: "<<plainMessage.size());
+        return -1;
+    }
+    LOG_ENTRY(MyLogger::INFO, "Received AUTH_DATA");
+
+    plainMessage = plainMessage.mid(1);
+
+    if (plainMessage[0] != (char)2) {
+        LOG_ENTRY(MyLogger::ERROR, "Received wrong auth message");
+        return -1;
+    }
+    LOG_ENTRY(MyLogger::INFO, "Received REQUEST_PASSWORD");
+
+    ////////////////////
+    // send Password
+    ///////////////////
+
+    authCode = 3;
+    plainMessage = MessageCodes::getMessageCode(MessageCodes::AUTH_DATA)
+            + QByteArray(&authCode, 1) + QString("PasswordTestowe").toUtf8();
+
+    messageHash = hash->generateHash(plainMessage);
+
+    qToBigEndian((qint32) messageHash.size(), rawSize);
+
+    message = QByteArray((char*) rawSize, 4) + plainMessage + messageHash;
+
+    try {
+        message = sym->encrypt(message);
+    } catch (...) {
+        LOG_ENTRY(MyLogger::ERROR, "Unable to encrypt");
+        return -1;
+    }
+
+    qToBigEndian((qint32) message.size(), rawSize);
+    LOG_ENTRY(MyLogger::INFO, message.size());
+    message = QByteArray((char*) rawSize, 4) + message;
+
+    socket.write(message);
+    if (!socket.waitForBytesWritten()) {
+        LOG_ENTRY(MyLogger::ERROR, "Unable to send data");
+        return -1;
+    }
+    LOG_ENTRY(MyLogger::INFO, "AUTH_DATA sent");
 
     if (socket.bytesAvailable() == 0 && !socket.waitForReadyRead()) {
         LOG_ENTRY(MyLogger::ERROR, "No data received");
@@ -394,7 +539,7 @@ int main(void)
         LOG_ENTRY(MyLogger::ERROR, "Unable to send data");
         return -1;
     }
-    LOG_ENTRY(MyLogger::INFO, "END sent");
+    LOG_ENTRY(MyLogger::INFO, "LOGS_PORTION sent");
 
     if (socket.bytesAvailable() == 0 && !socket.waitForReadyRead()) {
         LOG_ENTRY(MyLogger::ERROR, "No data received");
