@@ -41,21 +41,25 @@ void ToIcingaWritter::consumeDataPortion(const ReadPortion *portion,
 {
     LOG_ENTRY(MyLogger::INFO,
             " Writing portion of "<<portion->getLogs().size()<<" logs.");
-    foreach(QString log, portion->getLogs()){
-    std::string logStd = log.toStdString();
-    const char *buf = logStd.c_str();
+    foreach(QString log, portion->getLogs()) {
+        if (log[log.size()] == '\n') {
+            log = log.left(log.size() - 1);
+        }
+        std::string logStd = log.toStdString();
+        const char *buf = logStd.c_str();
 
-    for(int toWrite = log.size(); toWrite > 0; ) {
-        int written = write(m_pipeDesc, buf + log.size() - toWrite, toWrite);
-        if(written < 0) {
-            LOG_ENTRY(MyLogger::FATAL, "Unable to write to "<<m_pipeFile);
-            //TODO add error handling
-            return;
-        } else {
-            toWrite -= written;
+        for (int toWrite = log.size(); toWrite > 0;) {
+            int written = write(m_pipeDesc, buf + log.size() - toWrite,
+                    toWrite);
+            if (written < 0) {
+                LOG_ENTRY(MyLogger::FATAL, "Unable to write to "<<m_pipeFile);
+                //TODO add error handling
+                return;
+            } else {
+                toWrite -= written;
+            }
         }
     }
-}
 
     QMetaObject::invokeMethod(toConfirm, confirmMethod.toStdString().c_str(),
             Qt::QueuedConnection, Q_ARG(const ReadPortion*, portion));

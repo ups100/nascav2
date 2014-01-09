@@ -129,7 +129,6 @@ MyNscaMain::WhatToDo MyNscaMain::parseCommandLineArgs()
         ret = CHECK_CONFIGURATION_FILE;
     }
 
-    LOG_ENTRY(MyLogger::DEBUG, m_vm.count("conf_file"))
     if (m_vm.count("conf_file") && m_vm.count("conf_file") == 1) {
         m_confPath = QString::fromStdString(m_vm["conf_file"].as<std::string>());
     }
