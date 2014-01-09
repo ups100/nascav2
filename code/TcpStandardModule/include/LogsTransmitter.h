@@ -81,6 +81,18 @@ private slots:
 private:
 
     /**
+     * @brief Translate GMT time to local
+     * @param[in] time in GMT
+     * @return time in local
+     */
+    time_t translateTime(qint64 time);
+
+    /**
+     * @brief Gets the QString with contains left most characters till '\0' sign
+     */
+    QString getNullTerminatedString(const QByteArray& array);
+
+    /**
      * @brief Function executed when logs portion has arrived
      * @param[in] message received from client
      */

@@ -10,6 +10,7 @@
 #include "DataFile.h"
 #include "MyNscaMain.h"
 #include "LogEntry.h"
+#include "Log.h"
 #include <QObject>
 
 namespace INZ_project {
@@ -60,6 +61,11 @@ DataChannel::~DataChannel()
 
 bool DataChannel::write(const DataPortion& portion)
 {
+    QList<QString> logs;
+    foreach(boost::shared_ptr<Log> log, portion.getLogs()) {
+        logs.append(log->getFormatedOutput());
+    }
+
     bool ret = true;
     if (portion.getClient() != m_client) {
         LOG_ENTRY(MyLogger::DEBUG,
@@ -74,8 +80,7 @@ bool DataChannel::write(const DataPortion& portion)
     }
 
     if (ret && (ret = m_pendingWrites.empty())) {
-        ret = m_file->write(m_client, m_provider, m_consumers, m_header,
-                portion.getIcingaFormated());
+        ret = m_file->write(m_client, m_provider, m_consumers, m_header, logs);
     }
 
     return ret;
@@ -84,6 +89,11 @@ bool DataChannel::write(const DataPortion& portion)
 int DataChannel::scheduleForWrite(const DataPortion& portion)
 {
     int ret = 0;
+    QList<QString> logs;
+    foreach(boost::shared_ptr<Log> log, portion.getLogs()) {
+        logs.append(log->getFormatedOutput());
+    }
+
     if (portion.getClient().simplified() != m_client.simplified()) {
         LOG_ENTRY(MyLogger::DEBUG,
                 "Trying to write logs from: "<<portion.getClient() <<" to channel which belongs to "<<m_client);
@@ -97,10 +107,10 @@ int DataChannel::scheduleForWrite(const DataPortion& portion)
     }
 
     if (ret == 0) {
-        qint64 id = m_file->scheduleForWrite(m_client, m_provider, m_consumers, m_header,
-                portion.getIcingaFormated());
+        qint64 id = m_file->scheduleForWrite(m_client, m_provider, m_consumers,
+                m_header, logs);
 
-        if( id > 0) {
+        if (id > 0) {
             m_pendingWrites.enqueue(id);
         }
 

@@ -174,7 +174,8 @@ int main(void)
     LOG_ENTRY(MyLogger::INFO,
             "Received CHOOSE_ALGORITHM, hash size: "<< message.mid(5, size - 5).size());
 
-    if (!signer->verify(QByteArray(randoms, 8) + clientID.toUtf8(), message.mid(1, size - 1))) {
+    if (!signer->verify(QByteArray(randoms, 8) + clientID.toUtf8(),
+            message.mid(1, size - 1))) {
         LOG_ENTRY(MyLogger::ERROR, "Signature missmatch");
         return -1;
     }
@@ -516,8 +517,22 @@ int main(void)
     ////////////////////
     // send LOGS_PORTION
     ///////////////////
-    plainMessage = MessageCodes::getMessageCode(MessageCodes::LOGS_PORTION)
-            + QString("To jest LOG\n").toUtf8();
+    char checkCode = 0, checkState = 0;
+
+    plainMessage = MessageCodes::getMessageCode(MessageCodes::LOGS_PORTION);
+    //code of log type
+    plainMessage.append(QByteArray("\0", 1));
+    //timestamp
+    time_t t = time(0L);
+    t = (time_t) qToBigEndian((qint64)t);
+    plainMessage.append(QByteArray((char *)&t, 8));
+    //hostname
+    plainMessage.append(QString("hostName").toUtf8() + QByteArray("\0", 1));
+    //status
+    plainMessage.append(QByteArray("\0", 1));
+    //output
+    plainMessage.append(QString("Output").toUtf8()+ QByteArray("\0", 1));
+
     messageHash = hash->generateHash(plainMessage);
 
     qToBigEndian((qint32) messageHash.size(), rawSize);
@@ -604,9 +619,6 @@ int main(void)
     }
     LOG_ENTRY(MyLogger::INFO, "END sent");
 
-    if (socket.bytesAvailable() == 0 && !socket.waitForReadyRead()) {
-        LOG_ENTRY(MyLogger::ERROR, "No data received");
-        return -1;
-    }
+    socket.close();
     return 0;
 }

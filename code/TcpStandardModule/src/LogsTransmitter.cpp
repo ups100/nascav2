@@ -13,8 +13,11 @@
 #include "DataPortion.h"
 #include "ClientSession.h"
 #include "DataChannel.h"
+#include "Log.h"
+#include <QtEndian>
 
 using INZ_project::Base::DataPortion;
+using INZ_project::Base::Log;
 
 namespace INZ_project {
 namespace TcpStandardModule {
@@ -106,8 +109,7 @@ void LogsTransmitter::readNextMessage()
 
         default:
             LOG_ENTRY(MyLogger::DEBUG,
-                    "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.")
-            ;
+                    "Unexpected message: #"<<MessageCodes::getMessageType(message) <<" received from client.");
             //close the session
             disconnectAll();
             emit finished(false);
@@ -117,52 +119,119 @@ void LogsTransmitter::readNextMessage()
 
 void LogsTransmitter::logsPortionReceived(const QByteArray& message)
 {
-    QList<QString> *logs = new QList<QString>();
+    QList<boost::shared_ptr<Log> > logs;
+    //host Structure: <byte> <8 bytes> <null term> byte    <null term>
+    //host             HOST_CHECK   time_t    hostName    state     output
+    //service structure: <byte> <8 bytes> <null term> <null term> byte  <null term>
+    //service structure: SRV_CHECK    timet_t    hostName    srvName  state  output
 
-    //separate each log
-    int prevIndex = 1;
-    for (int index = message.indexOf('\n', prevIndex); index > 0; index =
-            message.indexOf('\n', prevIndex)) {
-        logs->append(QString(message.mid(prevIndex, index - prevIndex + 1)));
-        prevIndex = index + 1;
+    int prevIndex = 1, pos;
+    //parse the logs
+    for (QByteArray tmpMessage = message.mid(1); tmpMessage.size() > 0;
+            tmpMessage = tmpMessage.mid(pos)) {
+        MessageCodes::LogType type = MessageCodes::getLogType(tmpMessage);
+        if (type == MessageCodes::INVALID_LOG_TYPE) {
+            //error
+            LOG_ENTRY(MyLogger::ERROR, "Wrong Logs format");
+            disconnectAll();
+            emit finished(false);
+            return;
+        }
+
+        tmpMessage = tmpMessage.mid(1);
+
+        //Let's get the time
+        qint64 rawTime = qFromBigEndian<qint64>(
+                (const uchar*) tmpMessage.data());
+        time_t time = translateTime(rawTime);
+        tmpMessage = tmpMessage.mid(8);
+
+        //now lets get the the host name
+        QString hostName = getNullTerminatedString(tmpMessage);
+        tmpMessage = tmpMessage.mid(hostName.size() + 1);
+
+        //get the service name if suitable
+        QString serviceName;
+        if (type == MessageCodes::SERVICE_CHECK) {
+            serviceName = getNullTerminatedString(tmpMessage);
+            tmpMessage = tmpMessage.mid(serviceName.size() + 1);
+        }
+
+        //get the state
+        char state = tmpMessage[0];
+        tmpMessage = tmpMessage.mid(1);
+
+        //get the plugin output
+        QString pluginOutput = getNullTerminatedString(tmpMessage);
+        tmpMessage = tmpMessage.mid(pluginOutput.size() + 1);
+
+        try {
+            Log *log = new Log(time, hostName, serviceName, state,
+                    pluginOutput);
+            logs.append(boost::shared_ptr<Log>(log));
+        } catch (Log::LogWrongFormatException &e) {
+            LOG_ENTRY(MyLogger::ERROR, "Log wrong format: "<<e.what());
+            disconnectAll();
+            emit finished(false);
+            return;
+        }
+
     }
 
-    if (logs->empty()) {
+    if (logs.empty()) {
         LOG_ENTRY(MyLogger::ERROR, "Empty logs package received");
-        delete logs;
         disconnectAll();
         emit finished(false);
         return;
     }
 
-    //initialize portion
-    DataPortion portion(logs, m_session->getClient().get(), m_provider);
+    try {
+        //initialize portion
+        DataPortion portion(logs, m_session->getClient().get(), m_provider);
 
-    //count the hash
-    QByteArray hash = m_session->getHashAlgorithm()->generateHash(
-            message.mid(1));
+        //count the hash
+        QByteArray hash = m_session->getHashAlgorithm()->generateHash(
+                message.mid(1));
 
-    qint64 id = 0;
-    if ((id = m_channel->scheduleForWrite(portion)) == 0) {
-        //logs hash been submitted let's send confirmation
-        boost::shared_ptr<MessageSink> destination =
-                m_session->getDestination();
-        destination->write(
-                MessageCodes::getMessageCode(MessageCodes::ACK) + hash);
-        m_timer.start();
+        qint64 id = 0;
+        if ((id = m_channel->scheduleForWrite(portion)) == 0) {
+            //logs hash been submitted let's send confirmation
+            boost::shared_ptr<MessageSink> destination = m_session
+                    ->getDestination();
+            destination->write(
+                    MessageCodes::getMessageCode(MessageCodes::ACK) + hash);
+            m_timer.start();
 
-    } else if (id > 0) {
-        m_state = WRITTING_LOG;
-        m_request = std::make_pair(hash, id);
+        } else if (id > 0) {
+            m_state = WRITTING_LOG;
+            m_request = std::make_pair(hash, id);
 
-        connect(m_channel, SIGNAL(portionWritten(qint64)), this,
-                SLOT(portionWritten(qint64)));
+            connect(m_channel, SIGNAL(portionWritten(qint64)), this,
+                    SLOT(portionWritten(qint64)));
 
-    } else {
-        LOG_ENTRY(MyLogger::ERROR, "Unable to write logs.");
+        } else {
+            LOG_ENTRY(MyLogger::ERROR, "Unable to write logs.");
+            disconnectAll();
+            emit finished(false);
+        }
+    } catch (DataPortion::NoRightsException &e) {
+        LOG_ENTRY(MyLogger::ERROR, e.what());
         disconnectAll();
         emit finished(false);
+        return;
     }
+
+}
+
+QString LogsTransmitter::getNullTerminatedString(const QByteArray& array)
+{
+    int pos = array.indexOf('\0');
+    return pos < 0 ? QString() : QString::fromUtf8(array.left(pos));
+}
+
+time_t LogsTransmitter::translateTime(qint64 time)
+{
+    return (time_t) time;
 }
 
 void LogsTransmitter::portionWritten(qint64 id)

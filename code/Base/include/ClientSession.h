@@ -15,6 +15,7 @@
 #include "AAAFactory.h"
 #include "ConversationInterface.h"
 #include "SymetricAlgorithm.h"
+#include <QSet>
 #include <boost/shared_ptr.hpp>
 
 namespace INZ_project {
@@ -22,6 +23,7 @@ namespace Base {
 
 class DataChannel;
 class DataProvider;
+class Log;
 
 /**
  * @brief Class which represents a single client connection.
@@ -71,7 +73,7 @@ public:
      * @brief Check whether this client has been successfully authorized
      * @return true if client has been authorized, false otherwise
      */
-    bool isAuthorized();
+    bool isAuthorized() const;
 
     /**
      * @brief Gets the data channel for this client
@@ -91,6 +93,13 @@ public:
      * @note The caller takes the ownership of returned object
      */
     Cryptographic::SymetricAlgorithm* getSymetricAlgorithm(const QString& name);
+
+    /**
+     * @brief Checks if this client has rights to submit this log
+     * @param[in] log to be checked
+     * @return true if yes, false if no
+     */
+    bool checkLog(const Log& log) const;
 
     /**
      * @brief Exception class for client class
@@ -145,7 +154,15 @@ private:
      */
     boost::shared_ptr<DataChannel> m_dataChannel;
 
+    /**
+     * @brief Currently used AAA module
+     */
     AAA::AAAModule *m_module;
+
+    /**
+     * @brief List of allowed hosts
+     */
+    QSet<QString> m_allowedHosts;
 };
 
 } //namespace Base

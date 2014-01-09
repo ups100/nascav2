@@ -10,6 +10,7 @@
 
 #include <QString>
 #include <QList>
+#include <stdexcept>
 #include <boost/shared_ptr.hpp>
 
 namespace INZ_project {
@@ -17,6 +18,7 @@ namespace Base {
 
 class ClientSession;
 class DataProvider;
+class Log;
 
 class DataPortion
 {
@@ -31,7 +33,7 @@ public:
      * @param[in] provider which received those logs
      * This object does NOT take the ownership of this param
      */
-    DataPortion(QList<QString>* logs, const ClientSession* client,
+    DataPortion(const QList<boost::shared_ptr<Log> >& logs, const ClientSession* client,
             const DataProvider* provider);
 
     /**
@@ -43,7 +45,7 @@ public:
      * @brief Get's the logs in icinga suitable format.
      * @return icinga formated logs
      */
-    const QList<QString>& getIcingaFormated() const;
+    const QList<boost::shared_ptr<Log> >& getLogs() const;
 
     /**
      * @brief Get's the size of logs portion
@@ -63,6 +65,22 @@ public:
      */
     const QString& getProvider() const;
 
+    /**
+     * @brief Exception class for errors occurred creating this portion
+     */
+    class NoRightsException : public std::runtime_error
+    {
+    public:
+        /**
+         * @brief Constructor
+         * @param[in] arg exception string
+         */
+        explicit NoRightsException(const std::string& arg)
+                : std::runtime_error(arg)
+        {
+        }
+    };
+
 private:
     /**
      * @brief Client ID
@@ -79,7 +97,7 @@ private:
     /**
      * @brief Logs stored in this data portion
      */
-    boost::shared_ptr<QList<QString> > m_logs;
+    QList<boost::shared_ptr<Log> > m_logs;
 };
 
 } //namespace Base

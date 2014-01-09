@@ -28,6 +28,11 @@ char MessageCodes::m_codes[INVALID_MESSAGE_TYPE] =
         END,
 };
 
+char MessageCodes::m_logCodes[INVALID_LOG_TYPE] =
+{
+        HOST_CHECK, SERVICE_CHECK
+};
+
 QByteArray MessageCodes::getMessageCode(enum MessageCodes::MessageType type)
 {
     return type != INVALID_MESSAGE_TYPE ? QByteArray(&(m_codes[type]), 1) : QByteArray();
@@ -39,6 +44,19 @@ MessageCodes::MessageType MessageCodes::getMessageType(const QByteArray& code)
     for(int i = 0; i < INVALID_MESSAGE_TYPE; ++i) {
         if(*(code.data()) == m_codes[i]) {
             ret = (MessageType)i;
+            break;
+        }
+    }
+
+    return ret;
+}
+
+MessageCodes::LogType MessageCodes::getLogType(const QByteArray& type)
+{
+    LogType ret = INVALID_LOG_TYPE;
+    for (int i = 0; i < INVALID_LOG_TYPE; ++i) {
+        if (*(type.data()) == m_logCodes[i]) {
+            ret = (LogType) i;
             break;
         }
     }

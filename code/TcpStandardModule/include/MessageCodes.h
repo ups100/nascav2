@@ -40,6 +40,11 @@ public:
         INVALID_MESSAGE_TYPE
     };
 
+    enum LogType
+    {
+        HOST_CHECK = 0, SERVICE_CHECK, INVALID_LOG_TYPE
+    };
+
     /**
      * @brief Gets the code corresponding to given message type
      * @param[in] type of the message
@@ -55,6 +60,8 @@ public:
      */
     static MessageType getMessageType(const QByteArray& code);
 
+    static LogType getLogType(const QByteArray& type);
+
 private:
     /**
      * @brief Constructor
@@ -67,6 +74,11 @@ private:
      * @brief Codes of communicates
      */
     static char m_codes[INVALID_MESSAGE_TYPE];
+
+    /**
+     * @brief Codes of log types
+     */
+    static char m_logCodes[INVALID_LOG_TYPE];
 
 };
 

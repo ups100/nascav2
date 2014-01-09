@@ -12,6 +12,7 @@
 #include "ConfigurationParser.h"
 #include "MyNscaMain.h"
 #include "CryptographicFactory.h"
+#include "Log.h"
 
 namespace INZ_project {
 namespace Base {
@@ -24,6 +25,9 @@ ClientSession::ClientSession(const QString& clientId,
 {
     try {
         m_aaaModules = ConfigurationParser::getAAAModulesForClient(clientId);
+        foreach(QString host,ConfigurationParser::getClientHosts(clientId)) {
+            m_allowedHosts.insert(host);
+        }
     } catch (const ConfigurationParser::ParserException& e) {
         LOG_ENTRY(MyLogger::DEBUG, e.what()<<" While id = "<<clientId);
         throw ClientException(e.what());
@@ -97,7 +101,7 @@ void ClientSession::authorize(const QString& aaaModuleId,
     return;
 }
 
-bool ClientSession::isAuthorized()
+bool ClientSession::isAuthorized() const
 {
     return m_isAuthorized;
 }
@@ -134,6 +138,14 @@ Cryptographic::SymetricAlgorithm* ClientSession::getSymetricAlgorithm(
         const QString& name)
 {
     return Cryptographic::CryptographicFactory::getSymAlgorithm(name);
+}
+
+bool ClientSession::checkLog(const Log& log) const
+{
+    return m_allowedHosts.contains(log.getHostName())
+            && (log.getServiceName() == QString()
+                    || ConfigurationParser::getHostServices(m_clientId,
+                            log.getHostName()).contains(log.getServiceName()));
 }
 
 } //namespace Base
