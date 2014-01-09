@@ -118,7 +118,9 @@ void CryptographyInitializer::clientIdReceived(const QByteArray& message)
         switch (MessageCodes::getMessageType(decrypted)) {
             case MessageCodes::CLIENT_ID: {
                 //We have suitable message
-                QString clientId = decrypted.right(decrypted.length() - 1);
+                QByteArray content = decrypted.mid(1);
+                QByteArray random = decrypted.mid(1, 8);
+                QString clientId = decrypted.mid(9);
                 try {
                     m_clientSession = new Base::ClientSession(clientId,
                             m_provider);
@@ -126,7 +128,7 @@ void CryptographyInitializer::clientIdReceived(const QByteArray& message)
                     LOG_ENTRY(MyLogger::INFO,
                             "Client introduced as: "<<clientId);
 
-                    QByteArray signature = m_signer->sign(clientId.toUtf8());
+                    QByteArray signature = m_signer->sign(content);
                     destination->write(
                             MessageCodes::getMessageCode(
                                     MessageCodes::CHOOSE_ALGORITHM)

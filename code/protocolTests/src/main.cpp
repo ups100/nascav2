@@ -118,10 +118,12 @@ int main(void)
         return -1;
     }
 
+    char randoms[8] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+
     QString clientID = "Clients::Client1";
 
     message = MessageCodes::getMessageCode(MessageCodes::CLIENT_ID)
-            + clientID.toUtf8();
+            + QByteArray(randoms, 8) + clientID.toUtf8();
 
     try {
         message = algorithm->encrypt(message);
@@ -172,7 +174,7 @@ int main(void)
     LOG_ENTRY(MyLogger::INFO,
             "Received CHOOSE_ALGORITHM, hash size: "<< message.mid(5, size - 5).size());
 
-    if (!signer->verify(clientID.toUtf8(), message.mid(1, size - 1))) {
+    if (!signer->verify(QByteArray(randoms, 8) + clientID.toUtf8(), message.mid(1, size - 1))) {
         LOG_ENTRY(MyLogger::ERROR, "Signature missmatch");
         return -1;
     }
@@ -306,8 +308,7 @@ int main(void)
     ///////////////////
 
     plainMessage = MessageCodes::getMessageCode(
-            MessageCodes::CHOOSEN_AUTH_MODULE)
-            + QString("LoginPass").toUtf8();
+            MessageCodes::CHOOSEN_AUTH_MODULE) + QString("LoginPass").toUtf8();
 
     messageHash = hash->generateHash(plainMessage);
 
@@ -368,7 +369,7 @@ int main(void)
 
     plainMessage = plainMessage.mid(1);
 
-    if (plainMessage[0] != (char)0) {
+    if (plainMessage[0] != (char) 0) {
         LOG_ENTRY(MyLogger::ERROR, "Received wrong auth message");
         return -1;
     }
@@ -440,7 +441,7 @@ int main(void)
 
     plainMessage = plainMessage.mid(1);
 
-    if (plainMessage[0] != (char)2) {
+    if (plainMessage[0] != (char) 2) {
         LOG_ENTRY(MyLogger::ERROR, "Received wrong auth message");
         return -1;
     }
