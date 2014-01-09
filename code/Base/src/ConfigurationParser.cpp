@@ -30,6 +30,9 @@ ConfigurationParser::ConfigurationParser()
     m_tokenStrings["data_consumer"] = DATA_CONSUMER;
     m_tokenStrings["clients"] = CLIENTS;
     m_tokenStrings["client"] = CLIENT;
+    m_tokenStrings["hosts"] = HOSTS;
+    m_tokenStrings["host"] = HOST;
+    m_tokenStrings["service"] = SERVICE;
     m_tokenStrings["aaa_data"] = AAA_DATA;
     m_tokenStrings["aaa_module"] = AAA_MODULE;
     m_tokenStrings["routes"] = ROUTES;
@@ -206,7 +209,7 @@ QSet<QString> ConfigurationParser::getRoutes(const QString& client,
 
     QList<QString> rulesList = consumersRaw.toList();
     for (QList<QString>::iterator it = rulesList.begin(); it != rulesList.end();
-           ++it) {
+            ++it) {
         if (*it == parser->m_starString) {
             //We need to add every one so let's do this
             //When this is clear we know that there will be no groups but only valid members
@@ -278,6 +281,45 @@ const QString& ConfigurationParser::getAAAModuleData(const QString& client,
     }
 
     return parser->m_clientGroups[clientGroup][clientMember]->m_auth[aaaModule];
+}
+
+QList<QString> ConfigurationParser::getClientHosts(
+        const QString& client)
+{
+    ConfigurationParser *parser = ConfigurationParser::getInstance();
+    QString clientGroup, clientMember;
+
+    clientGroup = parser->getGroup(client);
+    clientMember = parser->getGroupMember(client);
+
+    if (!parser->m_clientGroups.contains(clientGroup)
+            || !parser->m_clientGroups[clientGroup].contains(clientMember)) {
+        throw ParserException("No such client.");
+    }
+
+    return parser->m_clientGroups[clientGroup][clientMember]->m_allowed.keys();
+}
+
+const QSet<QString>& ConfigurationParser::getHostServices(const QString& client,
+        const QString& host)
+{
+    ConfigurationParser *parser = ConfigurationParser::getInstance();
+    QString clientGroup, clientMember;
+
+    clientGroup = parser->getGroup(client);
+    clientMember = parser->getGroupMember(client);
+
+    if (!parser->m_clientGroups.contains(clientGroup)
+            || !parser->m_clientGroups[clientGroup].contains(clientMember)) {
+        throw ParserException("No such client.");
+    }
+
+    if (!parser->m_clientGroups[clientGroup][clientMember]->m_allowed.contains(
+            host)) {
+        throw ParserException("Host not allowed for this client");
+    }
+
+    return parser->m_clientGroups[clientGroup][clientMember]->m_allowed[host];
 }
 
 bool ConfigurationParser::parseConfiguration(QIODevice *input)
@@ -675,6 +717,10 @@ void ConfigurationParser::parseClient(QXmlStreamReader &stream,
                         parseAAAData(stream, groupName, id);
                         break;
 
+                    case HOSTS:
+                        parseHosts(stream, groupName, id);
+                        break;
+
                     default:
                         LOG_ENTRY(MyLogger::ERROR,
                                 "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
@@ -737,6 +783,110 @@ void ConfigurationParser::parseAAAData(QXmlStreamReader &stream,
 
             case QXmlStreamReader::EndElement:
                 if (getTokenType(stream.name()) == AAA_DATA) {
+                    return;
+                }
+                break;
+        }
+
+    } //while
+    if (stream.hasError()) {
+        LOG_ENTRY(MyLogger::ERROR,
+                stream.errorString()<<" At: "<<stream.lineNumber());
+        throw ParserException(stream.errorString().toStdString());
+    }
+}
+
+void ConfigurationParser::parseHosts(QXmlStreamReader &stream,
+        const QString &groupName, const QString &clientName)
+{
+    while (!stream.atEnd()) {
+        QXmlStreamReader::TokenType token = stream.readNext();
+        switch (token) {
+            case QXmlStreamReader::StartElement:
+                switch (getTokenType(stream.name())) {
+                    case HOST: {
+                        QXmlStreamAttributes attributes = stream.attributes();
+
+                        QString hostName;
+                        if (attributes.hasAttribute("name")) {
+                            hostName = attributes.value("name").toString();
+                            if (!m_clientGroups[groupName][clientName]
+                                    ->m_allowed.contains(hostName)) {
+                                m_clientGroups[groupName][clientName]->m_allowed[hostName] =
+                                        QSet<QString>();
+                            }
+                        } else {
+                            LOG_ENTRY(MyLogger::ERROR,
+                                    "No name attribute in host. Line: "<<stream.lineNumber());
+                            throw ParserException("No name");
+                        }
+                        parseHost(stream, groupName, clientName, hostName);
+                    }
+                        break;
+
+                    default:
+                        LOG_ENTRY(MyLogger::ERROR,
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
+                        throw ParserException("Invalid token");
+                }
+                break;
+
+            case QXmlStreamReader::EndElement:
+                if (getTokenType(stream.name()) == HOSTS) {
+                    return;
+                }
+                break;
+        }
+
+    } //while
+    if (stream.hasError()) {
+        LOG_ENTRY(MyLogger::ERROR,
+                stream.errorString()<<" At: "<<stream.lineNumber());
+        throw ParserException(stream.errorString().toStdString());
+    }
+}
+
+void ConfigurationParser::parseHost(QXmlStreamReader &stream,
+        const QString &groupName, const QString &clientName,
+        const QString& hostName)
+{
+    while (!stream.atEnd()) {
+        QXmlStreamReader::TokenType token = stream.readNext();
+        QXmlStreamAttributes attributes;
+        switch (token) {
+            case QXmlStreamReader::StartElement:
+                switch (getTokenType(stream.name())) {
+                    case SERVICE:
+                        attributes = stream.attributes();
+                        if (attributes.hasAttribute("name")) {
+                            QString service =
+                                    attributes.value("name").toString();
+                            if (!m_clientGroups[groupName][clientName]
+                                    ->m_allowed[hostName].contains(service)) {
+                                m_clientGroups[groupName][clientName]->m_allowed[hostName]
+                                        .insert(service);
+                            } else {
+                                LOG_ENTRY(MyLogger::ERROR,
+                                        "Service: "<<service<<" already exist in host "<<hostName <<" client: "<<clientName);
+                                throw ParserException(
+                                        "Service for this host already taken");
+                            }
+                        } else {
+                            LOG_ENTRY(MyLogger::ERROR,
+                                    "No name attribute in service. Line: "<<stream.lineNumber());
+                            throw ParserException("No name");
+                        }
+                        break;
+
+                    default:
+                        LOG_ENTRY(MyLogger::ERROR,
+                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
+                        throw ParserException("Invalid token");
+                }
+                break;
+
+            case QXmlStreamReader::EndElement:
+                if (getTokenType(stream.name()) == HOST) {
                     return;
                 }
                 break;

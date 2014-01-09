@@ -131,6 +131,24 @@ public:
             const QString& aaaModule);
 
     /**
+     * @brief Gets the list of allowed hosts for this client
+     * @param[in] client id of client
+     * @return list of allowed hosts
+     * @throws ParserError if invalid parameter strings has been provided
+     */
+    static QList<QString> getClientHosts(const QString& client);
+
+    /**
+     * @brief Gets the allowed services for given client and host
+     * @param[in] client id of client
+     * @param[in] host name
+     * @return list of allowed services for given client and host
+     * @throws ParserError if invalid parameter strings has been provided
+     */
+    static const QSet<QString>& getHostServices(const QString& client,
+            const QString& host);
+
+    /**
      * @brief Gets the instance of this object.
      * @return Instance of this object
      */
@@ -169,6 +187,9 @@ private:
         CLIENT,
         AAA_DATA,
         AAA_MODULE,
+        HOSTS,
+        HOST,
+        SERVICE,
         ROUTES,
         ROUTE,
         OTHER
@@ -218,6 +239,11 @@ private:
          * @brief Data providers to which client is allowed to connect
          */
         QMap<QString, QSet<QString> > m_routes;
+
+        /**
+         * @brief Hosts and their services about which information can be sent.
+         */
+        QMap<QString, QSet<QString> > m_allowed;
     };
 
     /**
@@ -305,7 +331,7 @@ private:
     void parseClients(QXmlStreamReader &stream);
 
     /**
-     * @brief Parses the client section
+     * @brief Parses the AAA data section
      * @details Configuration is saved in this class data structures
      * @param[in] stream with xml configuration
      * @param[in] groupName group to clientName is assigned
@@ -316,7 +342,29 @@ private:
             const QString &clientName);
 
     /**
-     * @brief Parses the AAA data section
+     * @brief Parses the hosts data section
+     * @details Configuration is saved in this class data structures
+     * @param[in] stream with xml configuration
+     * @param[in] groupName group to clientName is assigned
+     * @param[in] clientName name of client whose this data is
+     * @throw ParserException if document format is wrong
+     */
+    void parseHosts(QXmlStreamReader &stream, const QString &groupName,
+            const QString &clientName);
+
+    /**
+     * @brief Parses the host data section
+     * @details Configuration is saved in this class data structures
+     * @param[in] stream with xml configuration
+     * @param[in] groupName group to clientName is assigned
+     * @param[in] clientName name of client whose this data is
+     * @throw ParserException if document format is wrong
+     */
+    void parseHost(QXmlStreamReader &stream, const QString &groupName,
+            const QString &clientName, const QString& hostName);
+
+    /**
+     * @brief Parses the client section
      * @details Configuration is saved in this class data structures
      * @param[in] stream with xml configuration
      * @param[in] groupName group to which this client is assigned

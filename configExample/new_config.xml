@@ -26,6 +26,11 @@
 					<login>Login: LoginTestowy</login>
 				</aaa_module>
 			</aaa_data>
+			<hosts>
+				<host name="hostName">
+					<service name="serviceName" />
+				</host>
+			</hosts>
 		</client>
 	</clients>
 	<routes>
