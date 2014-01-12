@@ -125,10 +125,9 @@ void LogsTransmitter::logsPortionReceived(const QByteArray& message)
     //service structure: <byte> <8 bytes> <null term> <null term> byte  <null term>
     //service structure: SRV_CHECK    timet_t    hostName    srvName  state  output
 
-    int prevIndex = 1, pos;
+    int prevIndex = 1;
     //parse the logs
-    for (QByteArray tmpMessage = message.mid(1); tmpMessage.size() > 0;
-            tmpMessage = tmpMessage.mid(pos)) {
+    for (QByteArray tmpMessage = message.mid(1); tmpMessage.size() > 0;) {
         MessageCodes::LogType type = MessageCodes::getLogType(tmpMessage);
         if (type == MessageCodes::INVALID_LOG_TYPE) {
             //error
