@@ -32,8 +32,10 @@ Logger* Logger::getInstance()
 
 Logger::Logger()
 {
-    QFile *fileErr = new QFile();
-    fileErr->open(2, QIODevice::WriteOnly);
+    time_t current = time(0);
+    QString filename = QString("/tmp/nscav2.") + QString().setNum((long)current) + QString(".log");
+    QFile *fileErr = new QFile(filename);
+    fileErr->open(QIODevice::WriteOnly);
     m_outputDevice = fileErr;
 }
 

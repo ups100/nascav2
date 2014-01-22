@@ -112,6 +112,8 @@ inline void Logger::appendLog(LogLevel logLevel, int line, const char *file,
     QString log;
     message.setString(&log, QIODevice::WriteOnly);
     file = trimFilePath(file);
+
+    message<<"[ "<<time(0L)<<" ]";
     switch(logLevel) {
         case INFO:
             message<<"[ INFO ]";
@@ -142,6 +144,7 @@ inline void Logger::appendLog(LogLevel logLevel, int line, const char *file,
         QTextStream(logger->m_outputDevice)<<log;
     }
 
+    delete messageString;
     delete &message;
 }
 
