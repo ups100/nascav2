@@ -17,8 +17,11 @@
 #include "CryptographicFactory.h"
 #include "SignAlgorithm.h"
 #include "RSASSA_PKCSv15_SHA256.h"
+#include "MyNscaMain.h"
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
+#include <QTimer>
+#include <QEventLoop>
 
 using namespace INZ_project::TcpStandardModule;
 using namespace INZ_project::Cryptographic;
@@ -29,12 +32,12 @@ namespace Base {
 
 DefaultTcpProvider::DefaultTcpProvider()
         : m_thread(boost::bind(&DefaultTcpProvider::run, this)),
-                m_address(QHostAddress::Any), m_port(0)
+                m_address(QHostAddress::Any), m_port(0), m_connectionManager(0L)
 {
     m_algorithm = shared_ptr<AsymetricAlgorithm>(
             CryptographicFactory::getAsymAlgorithm("RSA_OAEP_SHA"));
     m_signer = shared_ptr<SignAlgorithm>(
-               CryptographicFactory::getSignAlgorithm("RSASSA_PKCSv15_SHA256"));
+            CryptographicFactory::getSignAlgorithm("RSASSA_PKCSv15_SHA256"));
 }
 
 DefaultTcpProvider::~DefaultTcpProvider()
@@ -44,7 +47,15 @@ DefaultTcpProvider::~DefaultTcpProvider()
 
 void DefaultTcpProvider::close()
 {
+    if(m_connectionManager != 0L) {
+        QEventLoop loop;
+        QObject::connect(m_connectionManager, SIGNAL(closed()), &loop, SLOT(quit()));
+        QTimer::singleShot(0, m_connectionManager, SLOT(close()));
+        loop.exec();
+    }
     m_thread.endThread();
+
+    m_connectionManager = 0L;
 }
 
 int DefaultTcpProvider::initImpl(const QString& additionalData,
@@ -65,9 +76,7 @@ int DefaultTcpProvider::run()
     if (!server.listen(m_address, m_port)) {
         LOG_ENTRY(MyLogger::FATAL,
                 "Unable to listen at "<<m_address.toString()<<":"<<m_port);
-        ///////////////////////////
-        // TODO add error handling
-        //////////////////////////
+        MyNscaMain::shutDown();
         return -1;
     } else {
         LOG_ENTRY(MyLogger::INFO,
@@ -104,6 +113,7 @@ int DefaultTcpProvider::run()
 
     //prepare connection manager
     ConnectionManager manager(&server, parts);
+    m_connectionManager = &manager;
 
     //let's roll the ball
     return m_thread.exec();
@@ -191,8 +201,10 @@ int DefaultTcpProvider::parseOptions(const QString& options)
         LOG_ENTRY(MyLogger::INFO,
                 "File with private key has not been provided. Generating new pair private, public keys.");
 
-        QFile privateKey(this->getProviderId() + ".priv");
-        QFile publicKey(this->getProviderId() + ".pub");
+        QFile privateKey(
+                "/usr/local/nscav2/crypto" + this->getProviderId() + ".priv");
+        QFile publicKey(
+                "/usr/local/nscav2/crypto" + this->getProviderId() + ".pub");
 
         if (privateKey.exists() || publicKey.exists()
                 || !privateKey.open(QIODevice::WriteOnly)

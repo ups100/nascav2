@@ -60,7 +60,6 @@ public:
             const QString& provider);
 
     /**
-     * @todo implement me
      * @brief Shuts down the whole program
      */
     static void shutDown();
@@ -98,6 +97,8 @@ private slots:
      * @brief Slot used to initialize data Providers
      */
     void initDataProviders();
+
+    void closeAllSlot();
 
 signals:
 
@@ -186,6 +187,13 @@ private:
      * @brief Creates data files for data providers according to configuration file.
      */
     int createDataFiles();
+
+    /**
+     * @brief Make this process a daemon.
+     * @return 0 on success in child process, value above zero in parent
+     * and below zero if error occurred
+     */
+    int demonize();
 
     /**
      * @brief Active data providers

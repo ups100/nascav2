@@ -91,10 +91,6 @@ bool DataFile::setFile(const QString& fileName, qint64 maxSize)
 
     m_firstLog = m_file.pos();
 
-    if (m_toWrite > maxSize) {
-
-    }
-
     if (m_toRead < 0) {
         //there is no pending logs in this file
         if (m_toWrite > maxSize) {
@@ -223,9 +219,9 @@ bool DataFile::write(const QString& client, const QString& provider,
 {
     QByteArray logsArray;
     logsArray.append(QString().setNum(logs.size()) + "\n");
-    foreach(QString log, logs){
-    logsArray.append(log);
-}
+    foreach(QString log, logs) {
+        logsArray.append(log);
+    }
 
     qint64 size = header.size() + logsArray.size();
 
@@ -255,9 +251,9 @@ qint64 DataFile::scheduleForWrite(const QString& client,
 {
     QByteArray logsArray;
     logsArray.append(QString().setNum(logs.size()) + "\n");
-    foreach(QString log, logs){
-    logsArray.append(log);
-}
+    foreach(QString log, logs) {
+        logsArray.append(log);
+    }
 
     qint64 size = header.size() + logsArray.size();
 
@@ -388,12 +384,12 @@ bool DataFile::writeImpl(const QString& client, const QString& provider,
         m_portion = new ReadPortion(logs, client, provider);
         m_nmbDest = consumers.size();
 
-        foreach(DataConsumer* consumer, consumers){
-        QMetaObject::invokeMethod(consumer, "consumeDataPortion",
-                Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion),
-                Q_ARG(QObject*, this), Q_ARG(QString, "confirmPortion"));
+        foreach(DataConsumer* consumer, consumers) {
+            QMetaObject::invokeMethod(consumer, "consumeDataPortion",
+                    Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion),
+                    Q_ARG(QObject*, this), Q_ARG(QString, "confirmPortion"));
+        }
     }
-}
 
     m_toWrite = writeTmp;
     m_toRead = readTmp;
@@ -475,14 +471,14 @@ void DataFile::readAndDistribute()
         m_portion = new ReadPortion(logs, client, provider);
         m_nmbDest = destCount;
 
-        foreach(DataConsumer* consumer, destinations){
-        QMetaObject::invokeMethod(consumer, "consumeDataPortion",
-                Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion));
+        foreach(DataConsumer* consumer, destinations) {
+            QMetaObject::invokeMethod(consumer, "consumeDataPortion",
+                    Qt::QueuedConnection, Q_ARG(const ReadPortion*, m_portion));
+        }
+    } catch (const QString& e) {
+        delete logs;
+        return;
     }
-} catch (const QString& e) {
-    delete logs;
-    return;
-}
 }
 
 void DataFile::confirmPortion(const ReadPortion *portion)
@@ -552,9 +548,9 @@ void DataFile::popNextFromQueue()
         QByteArray logsArray;
 
         logsArray.append(QString().setNum(rq->logs.size()) + "\n");
-        foreach(QString log, rq->logs){
-        logsArray.append(log);
-    }
+        foreach(QString log, rq->logs) {
+            logsArray.append(log);
+        }
 
         bool result = writeImpl(rq->client, rq->provider, rq->consumers,
                 rq->header, rq->logs, logsArray);

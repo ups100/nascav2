@@ -34,6 +34,7 @@ ToIcingaWritter::~ToIcingaWritter()
 void ToIcingaWritter::close()
 {
     m_thread.endThread();
+    ::close(m_pipeDesc);
 }
 
 void ToIcingaWritter::consumeDataPortion(const ReadPortion *portion,
@@ -88,7 +89,7 @@ int ToIcingaWritter::parseOptions(const QString& options)
         nlPos = options.indexOf("\n", pos);
         QString path = options.mid(pos + pipeString.size(),
                 nlPos - pos - pipeString.size());
-        m_pipeFile = path;
+        m_pipeFile = path.trimmed();
         LOG_ENTRY(MyLogger::INFO, "Command file path provided: "<<m_pipeFile);
     } else {
         LOG_ENTRY(MyLogger::INFO,

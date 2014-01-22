@@ -16,6 +16,9 @@
 #include <QDir>
 #include <QTimer>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/option.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -30,7 +33,8 @@ namespace Base {
 MyNscaMain* MyNscaMain::m_instance = 0L;
 
 MyNscaMain::MyNscaMain(int argc, char **argv)
-        : m_app(argc, argv), m_confPath("config.xml"), m_bufPath("buf"),
+        : m_app(argc, argv), m_confPath("/usr/local/nscav2/etc/config.xml"),
+                m_bufPath("/usr/local/nscav2/var/buf"),
                 m_maxBufSize(1024 * 100),
                 m_desc(
                         "Author: Krzysztof Opasiak <ups100@tlen.pl>\n Allowed options")
@@ -84,6 +88,11 @@ int MyNscaMain::exec()
             break;
         case CHECK_CONFIGURATION_FILE:
             ret = checkConfigurationFile();
+            if (ret < 0) {
+                std::cerr << "Wrong config given. Check log for details.\n";
+            } else {
+                std::cerr << "OK\n";
+            }
             break;
         case START_ONLY_CONSUMERS:
             ret = startOnlyConsumers();
@@ -97,9 +106,21 @@ int MyNscaMain::startOnlyConsumers()
 {
     int ret = 0;
     if ((ret = checkConfigurationFile()) != 0) {
+        std::cerr << "Wrong config given. Check log for details.\n";
         return ret;
     }
 
+    ret = demonize();
+    if (ret > 0) {
+        //parent
+        std::cerr << "Fork finished. New PID: " << ret << std::endl;
+        return 0;
+    } else if (ret < 0) {
+        std::cerr << "Unable to fork. Check log for details." << std::endl;
+        return -1;
+    }
+
+    //here goes only child
     //create data consumers
     if ((ret = createDataConsumers()) != 0) {
         return ret;
@@ -130,7 +151,8 @@ MyNscaMain::WhatToDo MyNscaMain::parseCommandLineArgs()
     }
 
     if (m_vm.count("conf_file") && m_vm.count("conf_file") == 1) {
-        m_confPath = QString::fromStdString(m_vm["conf_file"].as<std::string>());
+        m_confPath = QString::fromStdString(
+                m_vm["conf_file"].as<std::string>());
     }
 
     if (m_vm.count("buffers") && m_vm.count("buffers") == 1) {
@@ -140,7 +162,7 @@ MyNscaMain::WhatToDo MyNscaMain::parseCommandLineArgs()
     if (m_vm.count("maxBufferSize") && m_vm.count("maxBufferSize") == 1) {
         qint64 val = m_vm["maxBufferSize"].as<qint64>();
 
-        if(val <= 1024) {
+        if (val <= 1024) {
             ret = PRINT_HELP;
         } else {
             m_maxBufSize = val;
@@ -154,7 +176,18 @@ int MyNscaMain::startProgram()
 {
     int ret = 0;
     if ((ret = checkConfigurationFile()) != 0) {
+        std::cerr << "Wrong config given. Check log for details.\n";
         return ret;
+    }
+
+    ret = demonize();
+    if (ret > 0) {
+        //parent
+        std::cerr << "Fork finished. New PID: " << ret << std::endl;
+        return 0;
+    } else if (ret < 0) {
+        std::cerr << "Unable to fork. Check log for details." << std::endl;
+        return -1;
     }
 
     //create data consumers
@@ -187,6 +220,44 @@ int MyNscaMain::printHelp()
 {
     std::cerr << m_desc;
     return -1;
+}
+
+int MyNscaMain::demonize()
+{
+    pid_t pid, sid;
+
+    pid = fork();
+
+    //error
+    if (pid < 0) {
+        LOG_ENTRY(MyLogger::ERROR, "Unable to fork.");
+        return -1;
+    }
+
+    //parent
+    if (pid > 0) {
+        LOG_ENTRY(MyLogger::INFO, "Fork finished. New PID: "<<pid);
+        return pid;
+    }
+
+    umask(0);
+
+    sid = setsid();
+    if (sid < 0) {
+        LOG_ENTRY(MyLogger::ERROR, "Unable to create new sid.");
+        return -1;
+    }
+
+    if (chdir("/") < 0) {
+        LOG_ENTRY(MyLogger::ERROR, "Unable to change dir.");
+        return -1;
+    }
+
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+
+    return 0;
 }
 
 int MyNscaMain::checkConfigurationFile()
@@ -406,6 +477,36 @@ int MyNscaMain::createDataFiles()
     }
 
     return 0;
+}
+
+void MyNscaMain::shutDown()
+{
+    QTimer::singleShot(0, getInstance(), SLOT(closeAllSlot()));
+}
+
+void MyNscaMain::closeAllSlot()
+{
+    LOG_ENTRY(MyLogger::INFO, "Asking all provider to shut down");
+
+    foreach(QString provider, m_dataProviders.keys()) {
+        m_dataProviders[provider]->close();
+    }
+
+    LOG_ENTRY(MyLogger::INFO, "Asking all consumers to shut down");
+
+    foreach(QString consumer, m_dataConsumers.keys()) {
+        m_dataConsumers[consumer]->close();
+    }
+
+    LOG_ENTRY(MyLogger::INFO, "Closing all buffers");
+
+    foreach(QString buffer, m_dataFiles.keys()) {
+        m_dataFiles[buffer]->closeFile();
+    }
+
+    LOG_ENTRY(MyLogger::INFO, "Exiting main event loop");
+
+    m_app.exit(0);
 }
 
 } //namespace Base

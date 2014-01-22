@@ -19,7 +19,7 @@ namespace TcpStandardModule {
 
 Session::Session(MessageSink *destination,
         const QList<boost::shared_ptr<SessionPart> >& parts)
-        : m_result(false),m_currentSessionPart(0L), m_destination(destination)
+        : m_result(false), m_currentSessionPart(0L), m_destination(destination)
 {
     foreach(shared_ptr<SessionPart> part, parts) {
         SessionPart* sessionPart = part->clone();
@@ -71,7 +71,7 @@ boost::shared_ptr<Cryptographic::HashAlgorithm> Session::getHashAlgorithm()
 
 void Session::stopSession()
 {
-    if(m_currentSessionPart) {
+    if (m_currentSessionPart) {
         QTimer::singleShot(0, m_currentSessionPart, SLOT(terminate()));
     }
 }
@@ -80,7 +80,7 @@ void Session::startSession()
 {
     m_currentSessionPart = m_partsLeft.takeFirst();
     connect(m_currentSessionPart, SIGNAL(finished(bool)), this,
-                        SLOT(sessionPartFinished(bool)));
+            SLOT(sessionPartFinished(bool)));
     QTimer::singleShot(0, m_currentSessionPart, SLOT(execute()));
 }
 
@@ -98,6 +98,8 @@ void Session::sessionPartFinished(bool result)
             LOG_ENTRY(MyLogger::INFO,
                     "Session finished successfully. Closing the sink.");
             m_result = true;
+            connect(m_destination.get(), SIGNAL(sinkClosed()), this,
+                    SLOT(destinationClosed()));
             m_destination->close();
         }
     } else {
@@ -105,6 +107,8 @@ void Session::sessionPartFinished(bool result)
                 "Session finished unsuccessfully. Closing the sink.");
         clearPartsLeft();
         m_result = false;
+        connect(m_destination.get(), SIGNAL(sinkClosed()), this,
+                            SLOT(destinationClosed()));
         m_destination->close();
     }
 }

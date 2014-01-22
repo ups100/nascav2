@@ -34,7 +34,8 @@ void ConnectionManager::close()
             SLOT(newConnectionArrived()));
 
     if (!m_activeSessions.empty()) {
-        LOG_ENTRY(MyLogger::DEBUG, "Asking all sessions to terminate.");
+        LOG_ENTRY(MyLogger::DEBUG,
+                "Asking all "<<m_activeSessions.size()<<" sessions to terminate.");
         connect(this, SIGNAL(lastSessionFinished()), this, SIGNAL(closed()));
     } else {
         emit closed();

@@ -25,6 +25,9 @@ void AdditionalThread::run()
 
 void AdditionalThread::endThread()
 {
+    if(!this->isRunning()) {
+        return;
+    }
     QEventLoop loop;
     connect(this, SIGNAL(finished()), &loop, SLOT(quit()));
 

@@ -19,6 +19,10 @@ class SignAlgorithm;
 class HashAlgorithm;
 }
 
+namespace TcpStandardModule {
+class ConnectionManager;
+}
+
 namespace Base {
 
 /**
@@ -78,6 +82,8 @@ private:
     boost::shared_ptr<Cryptographic::AsymetricAlgorithm> m_algorithm;
 
     boost::shared_ptr<Cryptographic::SignAlgorithm> m_signer;
+
+    TcpStandardModule::ConnectionManager *m_connectionManager;
 };
 
 } //namespace Base
