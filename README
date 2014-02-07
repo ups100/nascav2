@@ -1,0 +1,21 @@
+To build the project:
+./setup.sh
+cd build
+make
+
+Remember to give good path to your Qt installation in setup.sh
+
+base is main program. It works as a daemon so to close it nicely use:
+kill -s SIGINT <PID>
+
+Daemon stores it's logs in /tmp.
+Daemon looks for some standard path so it would be good if the exist:
+
+    /usr/local/nscav2 - main directory
+    /usr/loacl/nscav2/etc - default directory for config file
+    /usr/local/nscav2/crypto - directory where keys are stored by default
+    /usr/local/nscav2/var/buf - default directory for round robin buffers
+
+Sample configs are in sampleConfig directory.
+
+ENJOY!

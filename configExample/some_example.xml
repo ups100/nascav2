@@ -1,0 +1,50 @@
+<nsca_config>
+	<data_providers id="Providers">
+		<data_provider id="Provider1" type="DefaultTcpProvider">
+			<additional_data>
+				<IP>IP: 0.0.0.0</IP>
+				<port>Port: 8888</port>
+				<key>PrivateKey: /usr/local/nscav2/crypto/Providers::Provider1.priv</key>				
+			</additional_data>
+		</data_provider>
+	</data_providers>
+	<data_consumers id="Consumers">
+		<data_consumer id="Consumer1" type="ToIcingaWritter">
+			<additional_data>
+				//cokolwiek tutaj
+			</additional_data>
+		</data_consumer>
+		<data_consumer id="Consumer2" type="ToScreenPrinter">
+			<additional_data>
+				//cokolwiek tutaj
+			</additional_data>
+		</data_consumer>
+	</data_consumers>
+	<clients id="Clients">
+		<client id="Client1">
+			<aaa_data>
+				<aaa_module type="AlwaysAllow">
+					//cokolwiek tutaj
+				</aaa_module>
+				<aaa_module type="LoginPass">
+					<password>Password: PasswordTestowe</password>
+					<login>Login: LoginTestowy</login>
+				</aaa_module>
+			</aaa_data>
+			<hosts>
+				<host name="Android">
+					<service name="SIGNAL" />
+					<service name="BATTERY" />
+					<service name="APPLICATION" />
+				</host>
+				<host name="hostName">
+					<service name="serviceName" />
+				</host>
+			</hosts>
+		</client>
+	</clients>
+	<routes>
+		<route client="Clients::Client1" via="Providers::Provider1" to="Consumers::Consumer1"/>
+		<route client="Clients::Client1" via="Providers::Provider1" to="Consumers::Consumer2"/>
+	</routes>
+</nsca_config>
