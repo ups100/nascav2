@@ -54,7 +54,7 @@ int ToScreenPrinter::initImpl(const QString& additionalData,
 
 int ToScreenPrinter::run()
 {
-    LOG_ENTRY(MyLogger::INFO, "Zajebiaszczo");
+    LOG_ENTRY(MyLogger::INFO, "ToScreenPrinter started");
     return m_thread.exec();
 }
 

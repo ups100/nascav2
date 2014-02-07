@@ -36,9 +36,7 @@ void MessageCipher::transformReadData(const QByteArray& message)
         } catch (const AsymetricAlgorithm::AsymmetricAlgorithmException &e) {
             LOG_ENTRY(MyLogger::ERROR,
                     "Unable to decrypt a message: "<<message<<" because: "<<e.what());
-            ///////////////////////////////////
-            //emit SocketError() TODO
-            ///////////////////////////////////
+            emit SinkError(MessageCorrupted);
         }
     } else {
         try {
@@ -46,9 +44,7 @@ void MessageCipher::transformReadData(const QByteArray& message)
         } catch (const SymetricAlgorithm::SymmetricAlgorithmException &e) {
             LOG_ENTRY(MyLogger::ERROR,
                     "Unable to decrypt a message: "<<message<<" because: "<<e.what());
-            ///////////////////////////////////
-            //emit SocketError() TODO
-            ///////////////////////////////////
+            emit SinkError(MessageCorrupted);
         }
     }
 }
@@ -62,9 +58,7 @@ QByteArray MessageCipher::transformWriteData(const QByteArray& message)
         } catch (const AsymetricAlgorithm::AsymmetricAlgorithmException &e) {
             LOG_ENTRY(MyLogger::ERROR,
                     "Unable to encrypt a message: "<<message<<" because: "<<e.what());
-            ///////////////////////////////////
-            //emit SocketError() TODO
-            ///////////////////////////////////
+            emit SinkError(WrongData);
         }
     } else {
         try {
@@ -72,9 +66,7 @@ QByteArray MessageCipher::transformWriteData(const QByteArray& message)
         } catch (const SymetricAlgorithm::SymmetricAlgorithmException &e) {
             LOG_ENTRY(MyLogger::ERROR,
                     "Unable to encrypt a message: "<<message<<" because: "<<e.what());
-            ///////////////////////////////////
-            //emit SocketError() TODO
-            ///////////////////////////////////
+            emit SinkError(WrongData);
         }
     }
 

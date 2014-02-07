@@ -31,7 +31,9 @@ public:
 
     enum SinkError
     {
-
+        WrongFormat,
+        WrongData,
+        MessageCorrupted
     };
 
     /**

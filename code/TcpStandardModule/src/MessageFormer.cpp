@@ -34,9 +34,7 @@ void MessageFormer::transformReadData(const QByteArray& message)
                 m_receiveBuffer.clear();
                 if(m_size <= 0) {
                     LOG_ENTRY(MyLogger::ERROR, "Wrong message format. Size: "<<m_size);
-                    ///////////////////////////////////
-                    //emit SocketError() TODO
-                    ///////////////////////////////////
+                    emit SinkError(WrongFormat);
                     continue;
                 }
             } else {

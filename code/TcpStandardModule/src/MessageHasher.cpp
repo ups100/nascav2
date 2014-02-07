@@ -30,9 +30,8 @@ void MessageHasher::transformReadData(const QByteArray& message)
         //message is not well-formed
         LOG_ENTRY(MyLogger::ERROR,
                 "Wrong message format. Total size: "<<message.size()<<" Hash Size: "<<size);
-        ///////////////////////////////////
-        //emit SocketError() TODO
-        ///////////////////////////////////
+
+        emit SinkError(WrongFormat);
     } else {
         //let's try to verify it
         QByteArray rawMessage = message.right(message.size() - 4);
@@ -43,16 +42,12 @@ void MessageHasher::transformReadData(const QByteArray& message)
             } else {
                 LOG_ENTRY(MyLogger::ERROR,
                         "Hash verification failed. Message corrupted.");
-                ///////////////////////////////////
-                //emit SocketError() TODO
-                ///////////////////////////////////
+                emit SinkError(MessageCorrupted);
             }
         } catch (const HashAlgorithm::HashAlgorithmException &e) {
             LOG_ENTRY(MyLogger::ERROR,
                     "Unable to validate a message: "<<message<<" because: "<<e.what());
-            ///////////////////////////////////
-            //emit SocketError() TODO
-            ///////////////////////////////////
+            emit SinkError(MessageCorrupted);
         }
     }
 }
@@ -67,9 +62,7 @@ QByteArray MessageHasher::transformWriteData(const QByteArray& message)
     } catch (const HashAlgorithm::HashAlgorithmException &e) {
         LOG_ENTRY(MyLogger::ERROR,
                 "Unable to hash a message: "<<message<<" because: "<<e.what());
-        ///////////////////////////////////
-        //emit SocketError() TODO
-        ///////////////////////////////////
+        emit SinkError(WrongData);
     }
     hashSize = qToBigEndian(hashSize);
     return QByteArray((char *)&hashSize, 4) + message + hash;

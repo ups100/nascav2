@@ -965,32 +965,6 @@ void ConfigurationParser::parseRoute(QXmlStreamReader &stream)
     }
 
     submitRoute(client, via, to);
-
-    while (!stream.atEnd()) {
-        QXmlStreamReader::TokenType token = stream.readNext();
-        switch (token) {
-            case QXmlStreamReader::StartElement:
-                switch (getTokenType(stream.name())) {
-                    default:
-                        LOG_ENTRY(MyLogger::ERROR,
-                                "Invalid token "<<stream.name().toString() <<" at: "<<stream.lineNumber());
-                        throw ParserException("Invalid token");
-                }
-                break;
-
-            case QXmlStreamReader::EndElement:
-                if (getTokenType(stream.name()) == ROUTES) {
-                    return;
-                }
-                break;
-        }
-
-    } //while
-    if (stream.hasError()) {
-        LOG_ENTRY(MyLogger::ERROR,
-                stream.errorString()<<" At: "<<stream.lineNumber());
-        throw ParserException(stream.errorString().toStdString());
-    }
 }
 
 void ConfigurationParser::submitRoute(const QString& from, const QString& via,

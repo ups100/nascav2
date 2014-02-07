@@ -30,9 +30,7 @@ void MessageSigner::transformReadData(const QByteArray& message)
         //message is not well-formed
         LOG_ENTRY(MyLogger::ERROR,
                 "Wrong message format. Total size: "<<message.size()<<" Hash Size: "<<size);
-        ///////////////////////////////////
-        //emit SocketError() TODO
-        ///////////////////////////////////
+        emit SinkError(WrongFormat);
     } else {
         //we have the message now it's time to decrypt the sign
         QByteArray rawMessage = message.mid(4, message.size() - 4 - size);
@@ -43,16 +41,12 @@ void MessageSigner::transformReadData(const QByteArray& message)
             } else {
                 LOG_ENTRY(MyLogger::ERROR,
                         "Hash verification failed. Message corrupted.");
-                ///////////////////////////////////
-                //emit SocketError() TODO
-                ///////////////////////////////////
+                emit SinkError(MessageCorrupted);
             }
         } catch (const SignAlgorithm::SignAlgorithmException &e) {
             LOG_ENTRY(MyLogger::ERROR,
                     "Unable to validate a message: "<<message<<" because: "<<e.what());
-            ///////////////////////////////////
-            //emit SocketError() TODO
-            ///////////////////////////////////
+            emit SinkError(MessageCorrupted);
         }
     }
 }
@@ -67,9 +61,7 @@ QByteArray MessageSigner::transformWriteData(const QByteArray& message)
     } catch (const SignAlgorithm::SignAlgorithmException &e) {
         LOG_ENTRY(MyLogger::ERROR,
                 "Unable to validate a message: "<<message<<" because: "<<e.what());
-        ///////////////////////////////////
-        //emit SocketError() TODO
-        ///////////////////////////////////
+        emit SinkError(WrongData);
     }
     signatureSize = qToBigEndian(signatureSize);
     return QByteArray((char *)&signatureSize, 4) + message + signature;

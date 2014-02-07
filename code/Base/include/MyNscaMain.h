@@ -142,7 +142,6 @@ private:
     };
 
     /**
-     * @todo Implement me
      * @brief Parses the command line arguments and told what to do
      * @return Action requested by user
      */
@@ -155,7 +154,6 @@ private:
     int startProgram();
 
     /**
-     * @todo Implement me
      * @brief Prints the help text and exits
      * @return 0 if program ends without any error, non zero value otherwise
      */

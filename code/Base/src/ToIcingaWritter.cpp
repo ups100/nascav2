@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include "ReadPortion.h"
+#include "MyNscaMain.h"
 
 namespace INZ_project {
 namespace Base {
@@ -54,7 +55,7 @@ void ToIcingaWritter::consumeDataPortion(const ReadPortion *portion,
                     toWrite);
             if (written < 0) {
                 LOG_ENTRY(MyLogger::FATAL, "Unable to write to "<<m_pipeFile);
-                //TODO add error handling
+                MyNscaMain::shutDown();
                 return;
             } else {
                 toWrite -= written;
@@ -104,7 +105,7 @@ int ToIcingaWritter::run()
     m_pipeDesc = open(m_pipeFile.toStdString().c_str(), O_WRONLY);
     if (m_pipeDesc < 0) {
         LOG_ENTRY(MyLogger::FATAL, "Unable to open file "<<m_pipeFile);
-        //TODO error handling
+        MyNscaMain::shutDown();
     }
 
     LOG_ENTRY(MyLogger::INFO, "ToIcingaWritter Started");
