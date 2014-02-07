@@ -1,5 +1,5 @@
 /**
- * @file  AESAlgorithmCBCMode.h
+ * @file  AESAlgorithmCBCMode.cpp
  * @brief  Definition of the Class INZ_project::Cryptographic::AESAlgorithmCBCMode
  * @date  19-10-2013 21:43:09
  * @author Krysztof Opasiak <ups100@tlen.pl>

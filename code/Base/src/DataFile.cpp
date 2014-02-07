@@ -1,6 +1,6 @@
 /**
- * @file  DataChannel.cpp
- * @brief Implementation of the Class DataChannel
+ * @file  DataFile.cpp
+ * @brief Implementation of the Class INZ_project::Base::DataFile
  * @date  27-09-2013 21:21:11
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

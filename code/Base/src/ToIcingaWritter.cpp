@@ -1,6 +1,6 @@
 /**
  * @file  ToIcingaWritter.cpp
- * @brief Implementation of the Class ToIcingaWritter
+ * @brief Implementation of the Class INZ_project::Base::ToIcingaWritter
  * @date  20-12-2013 21:21:11
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

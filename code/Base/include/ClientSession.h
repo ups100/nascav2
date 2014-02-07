@@ -1,6 +1,6 @@
 /**
  * @file  ClientSession.h
- * @brief  Definition of the Class ClientSession
+ * @brief  Definition of the Class INZ_project::Base::ClientSession
  * @date  13-sie-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

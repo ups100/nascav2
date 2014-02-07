@@ -1,6 +1,6 @@
 /**
  * @file  MyNscaMain.h
- * @brief  Definition of the Class MyNascaMain
+ * @brief  Definition of the Class INZ_project::Base::MyNascaMain
  * @date  13-09-2013 17:38:12
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

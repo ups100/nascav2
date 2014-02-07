@@ -1,6 +1,6 @@
 /**
  * @file  ToScreenPrinter.cpp
- * @brief Implementation of the Class ToScreenPrinter
+ * @brief Implementation of the Class INZ_project::Base::ToScreenPrinter
  * @date  28-11-2013 21:21:11
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

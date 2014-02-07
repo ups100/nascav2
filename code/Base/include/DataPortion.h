@@ -1,6 +1,6 @@
 /**
  * @file  DataPortion.h
- * @brief  Definition of the Class DataPortion
+ * @brief  Definition of the Class INZ_project::Base::DataPortion
  * @date  07-10-2013 19:55:36
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

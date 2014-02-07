@@ -48,7 +48,7 @@ public:
     /**
      * @brief Encrypts a message using set public key
      * @param[in] message
-     * @param[in] hash provided by sender
+     * @param[in] sign provided by sender
      * @return true if a hash is suitable for a given message, false otherwise
      */
     virtual bool verify(const QByteArray& message, const QByteArray& sign) = 0;

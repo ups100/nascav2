@@ -321,7 +321,6 @@ INPUT                  = 	@CMAKE_SOURCE_DIR@/AAA \
 							@CMAKE_SOURCE_DIR@/Base \
 							@CMAKE_SOURCE_DIR@/Cryptographic \
 							@CMAKE_SOURCE_DIR@/FactoryRegistration \
-							@CMAKE_SOURCE_DIR@/IcingaSenderModule \
 							@CMAKE_SOURCE_DIR@/Logger \
 							@CMAKE_SOURCE_DIR@/TcpStandardModule 
 
@@ -732,6 +731,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = "SYMETRIC_ALGORITHM(className, name)=class className: public SymetricAlgorithm" \
 						"ASYMETRIC_ALGORITHM(className, name)=class className: public AsymetricAlgorithm" \
 						"HASH_ALGORITHM(className, name)=class className: public HashAlgorithm" \
+						"SIGN_ALGORITHM(className, name)=class className: public SignAlgorithm" \
 						"AAAMODULE(className, name)=class className: public AAAModule" \
 						"DATA_PROVIDER(className, name)=class className: public DataProvider" \
 						"DATA_CONSUMER(className, name)=class className: public DataConsumer"

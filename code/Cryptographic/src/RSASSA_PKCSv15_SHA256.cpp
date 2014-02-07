@@ -1,5 +1,5 @@
 /**
- * @file  RSASSA_PKCSv15_SHA256.h
+ * @file  RSASSA_PKCSv15_SHA256.cpp
  * @brief  Definition of the Class INZ_project::Cryptographic::RSASSA_PKCSv15_SHA256
  * @date  19-10-2013 21:43:09
  * @author Krysztof Opasiak <ups100@tlen.pl>

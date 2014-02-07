@@ -1,6 +1,6 @@
 /**
- * @file  ClientSession.h
- * @brief  Implementation of the Class ClientSession
+ * @file  ClientSession.cpp
+ * @brief  Implementation of the Class INZ_project::Base::ClientSession
  * @date  17-10-2013 17:38:09
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

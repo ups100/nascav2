@@ -1,6 +1,6 @@
 /**
- * @file  MyNscaMain.h
- * @brief  Implementation of the Class MyNascaMain
+ * @file  MyNscaMain.cpp
+ * @brief  Implementation of the Class INZ_project::Base::MyNascaMain
  * @date  20-09-2013 17:38:12
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

@@ -33,6 +33,7 @@ Q_OBJECT
 public:
     /**
      * @brief Constructor
+     * @param[in] provider to which this object belongs to
      * @param[in] session to which this part belongs to
      * @param[in] milis timeout for communication with client
      */

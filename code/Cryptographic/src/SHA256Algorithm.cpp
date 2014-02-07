@@ -1,5 +1,5 @@
 /**
- * @file  SHA256Algorithm.h
+ * @file  SHA256Algorithm.cpp
  * @brief  Definition of the Class INZ_project::Cryptographic::SHA256Algorithm
  * @date  21-11-2013 21:43:09
  * @author Krysztof Opasiak <ups100@tlen.pl>

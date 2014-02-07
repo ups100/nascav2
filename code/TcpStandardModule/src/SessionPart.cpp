@@ -1,5 +1,5 @@
 /**
- * @file  SessionInitializer.cpp
+ * @file  SessionPart.cpp
  * @brief  Definition of the Class INZ_project::TcpStandardModule::SessionPart
  * @date  08-12-2013 13:56:12
  * @author Krysztof Opasiak <ups100@tlen.pl>

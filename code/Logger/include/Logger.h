@@ -1,5 +1,5 @@
 /**
- * @file  Registrator.h
+ * @file  Logger.h
  * @brief  Definition of MyLogger::Logger template class
  * @date  15-08-2013
  * @author Krysztof Opasiak <ups100@tlen.pl>

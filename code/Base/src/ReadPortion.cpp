@@ -1,6 +1,6 @@
 /**
- * @file  DataChannel.cpp
- * @brief Implementation of the Class ReadPortion
+ * @file  ReadPortion.cpp
+ * @brief Implementation of the Class INZ_project::Base::ReadPortion
  * @date  06-10-2013 21:21:11
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

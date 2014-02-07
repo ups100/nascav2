@@ -1,6 +1,6 @@
 /**
  * @file  DataChannel.h
- * @brief  Definition of the Class DataChannel
+ * @brief  Definition of the Class INZ_project::Base::DataChannel
  * @date  13-09-2013 17:38:11
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

@@ -1,6 +1,6 @@
 /**
  * @file  Log.h
- * @brief  Definition of the Class Log
+ * @brief  Definition of the Class INZ_project::Base::Log
  * @date  09-01-2014 18:55:36
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

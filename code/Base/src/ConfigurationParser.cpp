@@ -1,6 +1,6 @@
 /**
- * @file  ConfigurationParser.h
- * @brief  Implementation of the Class ConfigurationParser
+ * @file  ConfigurationParser.cpp
+ * @brief  Implementation of the Class INZ_project::Base::ConfigurationParser
  * @date  Created on:      13-sie-2013 17:38:10
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */

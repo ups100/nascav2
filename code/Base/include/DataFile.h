@@ -77,7 +77,6 @@ public:
      * @param[in] consumers who should receive it
      * @param[in] header to be stored in file
      * @param[in] logs which should be stored
-     * @param[in] requestId id of scheduled waiting for free space
      * @return false if there was no file set or data portion is to big to place it
      * now in a file, true if portion was successfully written.
      * @note This function is thread safe.
@@ -138,7 +137,7 @@ protected:
      * @param[in] consumers who should receive it
      * @param[in] header to be stored in file
      * @param[in] logs which should be stored
-     * @param[in] requestId id of scheduled waiting for free space
+     * @param[in] logsArray array of logs to be stored
      * @return false if there was no file set or data portion is to big to place it
      * now in a file, true if portion was successfully written.
      * @note This function is thread safe.

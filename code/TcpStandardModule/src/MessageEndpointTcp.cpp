@@ -1,3 +1,11 @@
+/**
+ * @file  MessageEndpointTcp.cpp
+ * @brief  Implementation of the Class INZ_project::TcpStandardModule::MessageEndpointTcp
+ * @date  17-11-2013 11:09:12
+ * @author Krysztof Opasiak <ups100@tlen.pl>
+ */
+
+
 #include "MessageEndpointTcp.h"
 #include "MessageSink.h"
 

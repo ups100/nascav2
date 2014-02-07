@@ -1,6 +1,6 @@
 /**
  * @file  ConfigurationParser.h
- * @brief  Definition of the Class ConfigurationParser
+ * @brief  Definition of the Class INZ_project::Base::ConfigurationParser
  * @date  13-sie-2013 17:38:10
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
@@ -358,6 +358,7 @@ private:
      * @param[in] stream with xml configuration
      * @param[in] groupName group to clientName is assigned
      * @param[in] clientName name of client whose this data is
+     * @param[in] hostName name of host whose this data is
      * @throw ParserException if document format is wrong
      */
     void parseHost(QXmlStreamReader &stream, const QString &groupName,

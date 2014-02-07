@@ -1,6 +1,6 @@
 /**
- * @file  ConnectionManager.cpp
- * @brief  Implementation of the Class INZ_project::TcpStandardModule::ConnectionManager
+ * @file  Session.cpp
+ * @brief  Implementation of the Class INZ_project::TcpStandardModule::Session
  * @date  1-12-2013 11:09:12
  * @author Krysztof Opasiak <ups100@tlen.pl>
  */
